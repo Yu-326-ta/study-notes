@@ -78,6 +78,13 @@ export function restoreQuestion(questionId: string): void {
   saveCustomizations(data);
 }
 
+export function restoreAllHiddenQuestions(): void {
+  const data = loadCustomizations();
+  if (data.hiddenIds.length === 0) return;
+  data.hiddenIds = [];
+  saveCustomizations(data);
+}
+
 export function saveQuestionOverride(
   questionId: string,
   form: QuestionEditForm

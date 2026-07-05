@@ -1,39 +1,34 @@
 "use client";
 
+import Link from "next/link";
+import { useIsClient } from "@/hooks/useIsClient";
 import { useQuestionCustomizationRevision } from "@/hooks/useQuestionCustomizationRevision";
 import { getHiddenQuestions } from "@/lib/data";
-import { restoreQuestion } from "@/lib/question-customizations";
-import { Button } from "@/components/ui/Button";
+import { HiddenQuestionsList } from "@/components/questions/HiddenQuestionsList";
 
 export function HiddenQuestionsSection() {
-  const revision = useQuestionCustomizationRevision();
-  void revision;
+  const mounted = useIsClient();
+  const customizationRevision = useQuestionCustomizationRevision();
+  void customizationRevision;
 
-  const hidden = getHiddenQuestions();
-
-  if (hidden.length === 0) {
-    return (
-      <p className="text-sm text-[var(--muted)]">非表示にした問題はありません。</p>
-    );
-  }
+  const count = mounted ? getHiddenQuestions().length : 0;
 
   return (
-    <ul className="max-h-64 space-y-2 overflow-y-auto">
-      {hidden.map((q) => (
-        <li
-          key={q.id}
-          className="flex items-start justify-between gap-3 rounded-xl border border-[var(--border)] p-3"
-        >
-          <p className="line-clamp-2 flex-1 text-sm">{q.prompt}</p>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => restoreQuestion(q.id)}
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm text-[var(--muted)]">
+          {count > 0 ? `${count} 問が非表示` : "非表示にした問題はありません"}
+        </p>
+        {count > 0 && (
+          <Link
+            href="/questions/hidden"
+            className="shrink-0 text-sm font-medium text-[var(--primary)] min-h-[44px] inline-flex items-center"
           >
-            復元
-          </Button>
-        </li>
-      ))}
-    </ul>
+            一覧を見る
+          </Link>
+        )}
+      </div>
+      {count > 0 && <HiddenQuestionsList compact showTitle={false} />}
+    </div>
   );
 }

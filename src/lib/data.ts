@@ -3,7 +3,9 @@ import type { StudyProgress } from "@/domain/progress";
 import type { SourceDocument } from "@/domain/source";
 import {
   CUSTOMIZATION_CHANGED_EVENT,
+  applyQuestionCustomizations,
   filterVisibleQuestions,
+  getHiddenQuestionIds,
 } from "./question-customizations";
 import { weakScore, todayString } from "./srs";
 
@@ -87,8 +89,10 @@ export function getRawQuestionById(id: string): Question | undefined {
 }
 
 export function getHiddenQuestions(): Question[] {
-  const visible = new Set(getAllQuestions().map((q) => q.id));
-  return RAW_ALL_QUESTIONS.filter((q) => !visible.has(q.id));
+  return getHiddenQuestionIds()
+    .map((id) => RAW_ALL_QUESTIONS.find((q) => q.id === id))
+    .filter((q): q is Question => q !== undefined)
+    .map(applyQuestionCustomizations);
 }
 
 export function getAllSources(questionSet?: QuestionSet): SourceDocument[] {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { useIsClient } from "@/hooks/useIsClient";
 import { DEFAULT_SETTINGS, type StudySettings } from "@/domain/progress";
 import {
@@ -109,7 +110,10 @@ export function SettingsClient() {
       <section className="space-y-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="font-semibold">非表示の問題</h2>
         <p className="text-sm text-[var(--muted)]">
-          学習中に非表示にした問題を復元できます。編集内容はエクスポートに含まれます。
+          学習中に非表示にした問題を確認・復元できます。
+          <Link href="/questions/hidden" className="ml-1 font-medium text-[var(--primary)]">
+            非表示の問題一覧
+          </Link>
         </p>
         <HiddenQuestionsSection />
       </section>

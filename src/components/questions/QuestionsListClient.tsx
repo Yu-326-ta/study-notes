@@ -12,6 +12,7 @@ import {
 } from "@/domain/question";
 import {
   getAllQuestions,
+  getHiddenQuestions,
   getQuestionStatus,
   getSourceForQuestion,
 } from "@/lib/data";
@@ -48,6 +49,11 @@ export function QuestionsListClient() {
     };
   }, [mounted, questionSet, category, search, customizationRevision]);
 
+  const hiddenCount = useMemo(() => {
+    if (!mounted) return 0;
+    return getHiddenQuestions().length;
+  }, [mounted, customizationRevision]);
+
   if (!mounted || !progress) {
     return <div className="py-8">読み込み中...</div>;
   }
@@ -62,7 +68,17 @@ export function QuestionsListClient() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">問題一覧</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">問題一覧</h1>
+        {hiddenCount > 0 && (
+          <Link
+            href="/questions/hidden"
+            className="shrink-0 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm font-medium min-h-[44px] inline-flex items-center"
+          >
+            非表示 {hiddenCount}
+          </Link>
+        )}
+      </div>
 
       <div className="flex gap-2">
         {(["notion", "related"] as QuestionSet[]).map((set) => (
