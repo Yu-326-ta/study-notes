@@ -1,0 +1,762 @@
+[
+  {
+    "id": "notion-product-deep-dive-365c019fa92580048b0af6fe0384218e-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Pub/Sub",
+      "7.1 概要",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「7.1 概要」について説明してください",
+    "answer": "Google Cloud Pub/Subはフルマネージドの非同期メッセージングサービス。本プロジェクトではサービス間の非同期通信に使用。",
+    "keyPoints": [
+      "Google Cloud Pub/Subはフルマネージドの非同期メッセージングサービス",
+      "本プロジェクトではサービス間の非同期通信に使用"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580048b0af6fe0384218e",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580048b0af6fe0384218e-001",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Pub/Sub",
+      "7.3 本プロジェクトでの使用パターン",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「7.3 本プロジェクトでの使用パターン」について説明してください",
+    "answer": "Infrastructure層からPublish\nサービス間の非同期イベント通知（例: 購入完了→再生権限付与）\n\nバッチ処理のトリガー\nPub/Subメッセージをトリガーにバッチ処理を起動\n\nイベント駆動アーキテクチャ\nサービス間の疎結合を実現",
+    "keyPoints": [
+      "Infrastructure層からPublish",
+      "サービス間の非同期イベント通知（例: 購入完了→再生権限付与）",
+      "バッチ処理のトリガー",
+      "Pub/Subメッセージをトリガーにバッチ処理を起動",
+      "イベント駆動アーキテクチャ",
+      "サービス間の疎結合を実現"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580048b0af6fe0384218e",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580178f20ca9b93afc5f7-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Go",
+      "1.1 概要",
+      "Go言語",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「1.1 概要」について説明してください",
+    "answer": "本プロジェクトのバックエンドサービスはすべてGoで実装されている。Goはシンプルさ・並行処理・高速コンパイルを重視して設計された静的型付けコンパイル言語。",
+    "keyPoints": [
+      "本プロジェクトのバックエンドサービスはすべてGoで実装されている",
+      "Goはシンプルさ・並行処理・高速コンパイルを重視して設計された静的型付けコンパイル言語"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580178f20ca9b93afc5f7",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580178f20ca9b93afc5f7-001",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Go",
+      "GC",
+      "1.2 ガベージコレクション（GC）",
+      "Go言語",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「1.2 ガベージコレクション（GC）」について説明してください",
+    "answer": "GoのGCは Concurrent Mark-and-Sweep（並行マーク&スイープ） 方式を採用している。\n\nGoのGCの特徴:\n\n世代別GCではない\nJava/C#と異なり、オブジェクトの世代を分けない。全オブジェクトを均一に扱う\n\nTricolor Mark-and-Sweep\n白（未到達）・灰（到達済み未スキャン）・黒（スキャン済み）の3色で管理\n\nWrite Barrier\nGCとアプリケーションが並行実行するため、GC中のポインタ変更を追跡するバリアを挿入\n\nGOGC環境変数\nデフォルト100。ヒープが前回GC後から100%成長したらGC発動。値を上げるとGC頻度減少（スループット↑、メモリ使用量↑）\n\nGOMEMLIMIT（Go 1.19+）\nメモリ上限を設定し、OOMを回避しつつGC頻度を制御\n\nプロジェクトへの影響:\n\nCloud SpannerへのクエリやgRPC呼び出しでのレスポンスタイムが安定する。Go GCの低STW特性はストリーミング配信のBFFのようなレイテンシ要求の厳しいサービスに適している。",
+    "keyPoints": [
+      "GoのGCは Concurrent Mark-and-Sweep（並行マーク&スイープ） 方式を採用している",
+      "GoのGCの特徴:\n\n世代別GCではない\nJava/C#と異なり、オブジェクトの世代を分けない",
+      "ヒープが前回GC後から100%成長したらGC発動",
+      "Go GCの低STW特性はストリーミング配信のBFFのようなレイテンシ要求の厳しいサービスに適している"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580178f20ca9b93afc5f7",
+    "difficulty": 3
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580178f20ca9b93afc5f7-002",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Go",
+      "1.3 Interface",
+      "Go言語",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「1.3 Interface」について説明してください",
+    "answer": "Goのinterfaceは 暗黙的実装（implicit implementation） を採用しており、他言語のインターフェースとは根本的に設計思想が異なる。\n\nGoにAbstract Classは存在しない\n\nGoは「継承より合成（Composition over Inheritance）」を言語レベルで強制する。\n\n本プロジェクトでの活用:\n\nDomain層のリポジトリインターフェースを定義し、Infrastructure層が暗黙的に実装する\n\nUsecase層はインターフェースにのみ依存し、具体的なSpanner/Valkey実装を知らない\n\nテスト時にモック実装に差し替え可能",
+    "keyPoints": [
+      "Goのinterfaceは 暗黙的実装（implicit implementation） を採用しており、他言語のインターフェースとは根本的に設計思想が異なる。",
+      "GoにAbstract Classは存在しない",
+      "Goは「継承より合成（Composition over Inheritance）」を言語レベルで強制する。",
+      "本プロジェクトでの活用:",
+      "Domain層のリポジトリインターフェースを定義し、Infrastructure層が暗黙的に実装する",
+      "Usecase層はインターフェースにのみ依存し、具体的なSpanner/Valkey実装を知らない",
+      "テスト時にモック実装に差し替え可能"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580178f20ca9b93afc5f7",
+    "difficulty": 2
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580178f20ca9b93afc5f7-003",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Go",
+      "1.5 エラーハンドリング",
+      "Go言語",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「1.5 エラーハンドリング」について説明してください",
+    "answer": "Go 1.13以降のerrors.Is()/errors.As()によるエラーチェーンがプロジェクト全体で活用される。",
+    "sourceId": "source-product-deep-dive-365c019fa92580178f20ca9b93afc5f7",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa925807cae1de8e0254566ef-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "GraphQL",
+      "gRPC",
+      "3.1 概要",
+      "GraphQL vs REST /gRPC",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「3.1 概要」について説明してください",
+    "answer": "rocket-bff（Backend for Frontend）ではGraphQLを採用し、フロントエンド（モバイルアプリ / Web）とバックエンドの間のデータ取得を最適化している。一方、バックエンドサービス間の通信にはgRPCを使用している。",
+    "keyPoints": [
+      "rocket-bff（Backend for Frontend）ではGraphQLを採用し、フロントエンド（モバイルアプリ / Web）とバックエンドの間のデータ取得を最適化している",
+      "一方、バックエンドサービス間の通信にはgRPCを使用している"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa925807cae1de8e0254566ef",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa925807cae1de8e0254566ef-001",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "GraphQL",
+      "gRPC",
+      "3.3 BFFでGraphQLを採用する理由",
+      "GraphQL vs REST /gRPC",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「3.3 BFFでGraphQLを採用する理由」について説明してください",
+    "answer": "Over-fetchingの解消\n動画配信サービスでは画面ごとに必要なデータが大きく異なる（一覧画面はサムネイル+タイトル、詳細画面はキャスト・シーズン・エピソード情報すべて）。GraphQLなら1つのエンドポイントで画面ごとに最適なデータを取得できる\n\nUnder-fetchingの解消\n再生画面では作品情報・ライセンス情報・再生履歴・購入情報を同時に必要とする。RESTだと4回のAPI呼び出しが必要だが、GraphQLなら1回のクエリで完結\n\nモバイルアプリとの親和性\n帯域制限のあるモバイル環境ではデータ転送量の削減が重要。GraphQLで必要最小限のデータのみ取得できる\n\nフロントエンド主導のスキーマ進化\nBFFのスキーマをフロントエンド要件に合わせて進化させやすい",
+    "keyPoints": [
+      "Over-fetchingの解消",
+      "動画配信サービスでは画面ごとに必要なデータが大きく異なる（一覧画面はサムネイル+タイトル、詳細画面はキャスト・シーズン・エピソード情報すべて）。GraphQLなら1つのエンドポイントで画面ごとに最適なデータを取得できる",
+      "Under-fetchingの解消",
+      "再生画面では作品情報・ライセンス情報・再生履歴・購入情報を同時に必要とする。RESTだと4回のAPI呼び出しが必要だが、GraphQLなら1回のクエリで完結",
+      "モバイルアプリとの親和性",
+      "帯域制限のあるモバイル環境ではデータ転送量の削減が重要。GraphQLで必要最小限のデータのみ取得できる",
+      "フロントエンド主導のスキーマ進化",
+      "BFFのスキーマをフロントエンド要件に合わせて進化させやすい"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa925807cae1de8e0254566ef",
+    "difficulty": 2
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa925807cae1de8e0254566ef-002",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "GraphQL",
+      "gRPC",
+      "4.1 概要",
+      "GraphQL vs REST /gRPC",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「4.1 概要」について説明してください",
+    "answer": "バックエンドサービス間の通信にはgRPCを採用。サービス定義とデータスキーマはProtocol Buffers（protobuf）で管理される。",
+    "keyPoints": [
+      "バックエンドサービス間の通信にはgRPCを採用",
+      "サービス定義とデータスキーマはProtocol Buffers（protobuf）で管理される"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa925807cae1de8e0254566ef",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa925807cae1de8e0254566ef-003",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "GraphQL",
+      "gRPC",
+      "4.4 本プロジェクトでの役割",
+      "GraphQL vs REST /gRPC",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「4.4 本プロジェクトでの役割」について説明してください",
+    "answer": "UI層\ngRPCサーバーとして外部からのリクエストを受信し、Protocol Buffers型をDTOに変換\n\nInfrastructure層\n他サービスへのgRPCクライアント呼び出し\n\n型安全性.protoファイルからGoのコード（サーバー/クライアントスタブ）を自動生成",
+    "keyPoints": [
+      "gRPCサーバーとして外部からのリクエストを受信し、Protocol Buffers型をDTOに変換",
+      "Infrastructure層",
+      "他サービスへのgRPCクライアント呼び出し",
+      "型安全性.protoファイルからGoのコード（サーバー/クライアントスタブ）を自動生成"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa925807cae1de8e0254566ef",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258083acaed4cd86e7a19e-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "GC",
+      "0.1 GC（ガベージコレクション）は何のためにあるのか",
+      "GCはなぜあるの？",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「0.1 GC（ガベージコレクション）は何のためにあるのか」について説明してください",
+    "answer": "GCがない世界（C / C++ / Rust）\n\nGCがない言語では、プログラマが自分でメモリを確保（malloc）し、不要になったら自分で解放（free）する。\n\n手動管理で起こる問題:\n\nMicrosoftの調査によると、同社のセキュリティ脆弱性の約70%がメモリ安全性の問題に起因する。\n\nGCがある世界（Go / Java / C# / Python）\n\nGCがあると、プログラマは「メモリをいつ解放するか」を考えなくてよい。ランタイムが「もう誰も使っていないオブジェクト」を自動で検出・回収する。\n\nGCの恩恵:\n\nGCの代償:\n\nRustの第三の道: 所有権システム\n\nRustはGCなしでメモリ安全性を実現する唯一のメジャー言語。コンパイル時に「誰がメモリを所有するか」を追跡し、スコープを抜けた時点で自動解放する。\n\nなぜ本プロジェクトはGoのGCを選んだか\n\n開発速度とメモリ安全性のバランス\nチーム開発で全員がRustの所有権を正しく扱えることを要求するのは現実的でない。GCにより安全かつ高速に開発できる\n\nGoのGCは低レイテンシに特化\nSTW 1ms未満。動画配信サービスのようなリアルタイム性が求められるサービスで許容できる\n\nチューニングがシンプルGOGCとGOMEMLIMITの2つだけ。JavaのGCチューニング（数十のフラグ）と比べ運用負荷が低い",
+    "sourceId": "source-product-deep-dive-365c019fa9258083acaed4cd86e7a19e",
+    "difficulty": 3
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258084b13aeca5e4375800-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "6.1 概要",
+      "Valkey",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「6.1 概要」について説明してください",
+    "answer": "Valkey（旧称: Redis互換OSS）は、Redisのフォークとして2024年にLinux Foundation傘下で誕生したインメモリデータストア。本プロジェクトではキャッシュ層として使用。",
+    "keyPoints": [
+      "Valkey（旧称: Redis互換OSS）は、Redisのフォークとして2024年にLinux Foundation傘下で誕生したインメモリデータストア",
+      "本プロジェクトではキャッシュ層として使用"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa9258084b13aeca5e4375800",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258084b13aeca5e4375800-001",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "6.2 Valkey誕生の経緯",
+      "Valkey",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「6.2 Valkey誕生の経緯」について説明してください",
+    "answer": "2024年3月、RedisがライセンスをBSD→SSPL/RSALに変更。これに対しLinux Foundation主導でRedis 7.2.4からフォークしたのがValkey。APIレベルでRedisと完全互換。",
+    "keyPoints": [
+      "2024年3月、RedisがライセンスをBSD→SSPL/RSALに変更",
+      "これに対しLinux Foundation主導でRedis 7.2.4からフォークしたのがValkey",
+      "APIレベルでRedisと完全互換"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa9258084b13aeca5e4375800",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258084b13aeca5e4375800-002",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "6.5 キャッシュパターン",
+      "Valkey",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「6.5 キャッシュパターン」について説明してください",
+    "answer": "本プロジェクトで使われる典型的なキャッシュパターン:",
+    "sourceId": "source-product-deep-dive-365c019fa9258084b13aeca5e4375800",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258084b13aeca5e4375800-003",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "6.6 本プロジェクトでの使用",
+      "Valkey",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「6.6 本プロジェクトでの使用」について説明してください",
+    "answer": "Infrastructure層でキャッシュ操作を実装\nDomain層のリポジトリインターフェースの実装として、Spanner呼び出し前にValkeyをチェック\n\nレスポンスタイム改善\nSpannerへの直接アクセスよりも桁違いに高速（sub-ms vs 数ms〜数十ms）\n\nBFF層でのキャッシュ\nGraphQLのリゾルバレベルでValkeyキャッシュを活用し、同一セッション内の重複クエリを排除",
+    "keyPoints": [
+      "Infrastructure層でキャッシュ操作を実装",
+      "Domain層のリポジトリインターフェースの実装として、Spanner呼び出し前にValkeyをチェック",
+      "レスポンスタイム改善",
+      "Spannerへの直接アクセスよりも桁違いに高速（sub-ms vs 数ms〜数十ms）",
+      "BFF層でのキャッシュ",
+      "GraphQLのリゾルバレベルでValkeyキャッシュを活用し、同一セッション内の重複クエリを排除"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa9258084b13aeca5e4375800",
+    "difficulty": 2
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Spanner",
+      "5.1 概要",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「5.1 概要」について説明してください",
+    "answer": "Cloud SpannerはGoogleが提供するグローバル分散リレーショナルデータベースで、従来のRDBMSの一貫性とNoSQLのスケーラビリティを両立する。",
+    "sourceId": "source-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb-001",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Spanner",
+      "5.3 Spannerの核心技術: TrueTime",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「5.3 Spannerの核心技術: TrueTime」について説明してください",
+    "answer": "SpannerがグローバルSSIを実現できる根幹は TrueTime API にある。\n\nGPS受信機と原子時計を組み合わせた物理的な時刻同期\n\n通常の分散システムでは論理クロック（Lamportクロック等）を使うが、Spannerは実時間に基づくタイムスタンプを付与\n\nこれにより、地理的に分散したノード間でトランザクションの順序を厳密に決定できる\n\n外部整合性（External Consistency）: あるトランザクションT1がコミットした後に開始されたT2は、必ずT1の結果を観測できる",
+    "keyPoints": [
+      "SpannerがグローバルSSIを実現できる根幹は TrueTime API にある。",
+      "GPS受信機と原子時計を組み合わせた物理的な時刻同期",
+      "通常の分散システムでは論理クロック（Lamportクロック等）を使うが、Spannerは実時間に基づくタイムスタンプを付与",
+      "これにより、地理的に分散したノード間でトランザクションの順序を厳密に決定できる",
+      "外部整合性（External Consistency）: あるトランザクションT1がコミットした後に開始されたT2は、必ずT1の結果を観測できる"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb",
+    "difficulty": 2
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb-002",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Spanner",
+      "5.5 本プロジェクトでの使用パターン",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「5.5 本プロジェクトでの使用パターン」について説明してください",
+    "answer": "Infrastructure層のDAOがSpanner固有の型変換を担当\nDomain層のモデルとSpanner行データの変換\n\nトランザクション境界管理\nDAOレベルでReadWriteTransaction/ReadOnlyTransactionを管理\n\nDomain層はSpannerを知らない\nリポジトリインターフェースのみで抽象化\n\nA：Atomicity（原子性）\n\nC：Consistency（一貫性）\n\nI：Isolation（独立性）\n\nD：Durability（永続性）",
+    "sourceId": "source-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb",
+    "difficulty": 2
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb-003",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Spanner",
+      "ACID",
+      "ACIDの内訳",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「① Atomicity（原子性）」について説明してください",
+    "answer": "👉 全部成功 or 全部失敗\n\n途中でエラー → 全ロールバック\n\n中途半端な状態は残らない\n\n例：送金処理\n\nA口座だけ減ってBに増えない → ❌",
+    "keyPoints": [
+      "全部成功 or 全部失敗",
+      "途中でエラー → 全ロールバック",
+      "中途半端な状態は残らない",
+      "例：送金処理",
+      "A口座だけ減ってBに増えない → ❌"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb-004",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Spanner",
+      "ACID",
+      "ACIDの内訳",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「② Consistency（一貫性）」について説明してください",
+    "answer": "👉 データのルールが常に守られる\n\n制約（主キー・外部キーなど）を壊さない\n\nトランザクション前後で整合性が保たれる",
+    "keyPoints": [
+      "データのルールが常に守られる",
+      "制約（主キー・外部キーなど）を壊さない",
+      "トランザクション前後で整合性が保たれる"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb-005",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Spanner",
+      "ACID",
+      "ACIDの内訳",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「③ Isolation（独立性）」について説明してください",
+    "answer": "👉 同時実行しても互いに干渉しない\n\n複数トランザクションが同時でも問題なし\n\n結果は「順番にやったのと同じ」になる（理想）\n\n※ 実際は分離レベルで調整（性能とのトレードオフ）",
+    "keyPoints": [
+      "同時実行しても互いに干渉しない",
+      "複数トランザクションが同時でも問題なし",
+      "結果は「順番にやったのと同じ」になる（理想）",
+      "※ 実際は分離レベルで調整（性能とのトレードオフ）"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb-006",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Spanner",
+      "ACID",
+      "ACIDの内訳",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「④ Durability（永続性）」について説明してください",
+    "answer": "👉 コミットしたら絶対に消えない\n\nクラッシュしてもデータは保持される\n\nログ（WALなど）で保証",
+    "keyPoints": [
+      "コミットしたら絶対に消えない",
+      "クラッシュしてもデータは保持される",
+      "ログ（WALなど）で保証"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa9258099aa95f792b2bbf5fb",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580c4b05be5d9f1f3960c-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "マイクロサービスとは",
+      "マイクロサービス vs モノリス: なぜサービスを分割するのか",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「機能ごとに独立したサービスとして分離する。本プロジェクトの構成がまさにこれ。」について説明してください",
+    "answer": "比較: なぜマイクロサービスが嬉しいのか\n\nマイクロサービスの代償（無視できないコスト）\n\n「最初からマイクロサービスにすべきか？」\n\n答え: No。 Martin Fowlerの「Monolith First」の原則：\n\nまずモノリスで作る\n\nドメイン境界が明確になったら分割する\n\n分割のタイミングは「チームの独立性が必要になったとき」\n\n本プロジェクトでは play, catalog, purchase, account, subscription 等のドメイン境界が明確であり、各コンポーネントの開発チームが独立してデプロイ・スケーリングする必要があるため、マイクロサービスが妥当。",
+    "keyPoints": [
+      "比較: なぜマイクロサービスが嬉しいのか",
+      "マイクロサービスの代償（無視できないコスト）",
+      "「最初からマイクロサービスにすべきか？」",
+      "答え: No。 Martin Fowlerの「Monolith First」の原則：",
+      "まずモノリスで作る",
+      "ドメイン境界が明確になったら分割する",
+      "分割のタイミングは「チームの独立性が必要になったとき」"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580c4b05be5d9f1f3960c",
+    "difficulty": 2
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580c8a3aef1823f822f42-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "アーキテクチャ設計",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「2.1 本プロジェクトの構成: レイヤードアーキテクチャ（クリーンアーキテクチャ準拠）」について説明してください",
+    "answer": "本プロジェクトはクリーンアーキテクチャの原則に従ったレイヤードアーキテクチャを採用している。特に 依存性逆転の原則（DIP） が核心にある。",
+    "keyPoints": [
+      "本プロジェクトはクリーンアーキテクチャの原則に従ったレイヤードアーキテクチャを採用している",
+      "特に 依存性逆転の原則（DIP） が核心にある"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580c8a3aef1823f822f42",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580c8a3aef1823f822f42-001",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "2.3 伝統的レイヤードとの決定的な違い",
+      "アーキテクチャ設計",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「2.3 伝統的レイヤードとの決定的な違い」について説明してください",
+    "answer": "Service層がRepository（具象）を直接参照するため、DB変更時にService層にも影響が出る。\n\n本プロジェクト（クリーンアーキテクチャ準拠）\n\nUsecase層はDomain層のインターフェースのみに依存し、SpannerやValkeyの詳細を知らない。Infrastructure層がDomain層のインターフェースを実装する（依存性逆転）。",
+    "keyPoints": [
+      "Service層がRepository（具象）を直接参照するため、DB変更時にService層にも影響が出る。",
+      "本プロジェクト（クリーンアーキテクチャ準拠）",
+      "Usecase層はDomain層のインターフェースのみに依存し、SpannerやValkeyの詳細を知らない。Infrastructure層がDomain層のインターフェースを実装する（依存性逆転）。"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580c8a3aef1823f822f42",
+    "difficulty": 2
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580c8a3aef1823f822f42-002",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "伝統的レイヤード",
+      "アーキテクチャ設計",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「2.4 各層と型変換フロー」について説明してください",
+    "answer": "この2段階変換により:\n\nUI層にProtocol Buffers（protobuf）の知識を閉じ込める\n\nDomain層がprotobufやSpannerに一切依存しない\n\n各層が独立してテスト可能",
+    "keyPoints": [
+      "この2段階変換により:",
+      "UI層にProtocol Buffers（protobuf）の知識を閉じ込める",
+      "Domain層がprotobufやSpannerに一切依存しない",
+      "各層が独立してテスト可能"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580c8a3aef1823f822f42",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580c8a3aef1823f822f42-003",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "伝統的レイヤード",
+      "アーキテクチャ設計",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「2.5 DDD（ドメイン駆動設計）との関係」について説明してください",
+    "answer": "本プロジェクトではDDDの戦術的パターンを部分的に採用している:\n\n現在の課題として「ドメインモデル貧血症」が認識されており、Domain層へのロジック集約が進行中。",
+    "keyPoints": [
+      "本プロジェクトではDDDの戦術的パターンを部分的に採用している:",
+      "現在の課題として「ドメインモデル貧血症」が認識されており、Domain層へのロジック集約が進行中。"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580c8a3aef1823f822f42",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580eab30bf1557bf18552-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "10.1 モジュラモノリスとは",
+      "モジュラモノリスと本プロジェクトの位置づけ",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「10.1 モジュラモノリスとは」について説明してください",
+    "answer": "モジュラモノリスは 「1つのデプロイ単位（モノリス）の中で、モジュール境界を厳密に定義する」 アーキテクチャ。マイクロサービスの「境界の明確さ」とモノリスの「運用のシンプルさ」を両取りしようとする。",
+    "keyPoints": [
+      "モジュラモノリスは 「1つのデプロイ単位（モノリス）の中で、モジュール境界を厳密に定義する」 アーキテクチャ",
+      "マイクロサービスの「境界の明確さ」とモノリスの「運用のシンプルさ」を両取りしようとする"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580eab30bf1557bf18552",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580eab30bf1557bf18552-001",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "10.2 モジュラモノリスの特徴",
+      "モジュラモノリスと本プロジェクトの位置づけ",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「10.2 モジュラモノリスの特徴」について説明してください",
+    "answer": "デプロイは1つ\nサービスは1プロセスで動く。ネットワーク通信なし\n\nモジュール境界は厳密\n各モジュールは公開Interface経由でのみやりとりする。内部の型や実装を直接参照することは禁止\n\nDBは共有可能\nテーブルはモジュールごとに「所有」するが、物理的には同一DBにある\n\n将来の分割が容易\n境界が明確なので、必要になったタイミングで特定のモジュールをマイクロサービスとして切り出せる",
+    "keyPoints": [
+      "デプロイは1つ",
+      "サービスは1プロセスで動く。ネットワーク通信なし",
+      "モジュール境界は厳密",
+      "各モジュールは公開Interface経由でのみやりとりする。内部の型や実装を直接参照することは禁止",
+      "DBは共有可能",
+      "テーブルはモジュールごとに「所有」するが、物理的には同一DBにある",
+      "将来の分割が容易",
+      "境界が明確なので、必要になったタイミングで特定のモジュールをマイクロサービスとして切り出せる"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580eab30bf1557bf18552",
+    "difficulty": 2
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580eab30bf1557bf18552-002",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "10.4 本プロジェクトはモジュラモノリスか？",
+      "モジュラモノリスと本プロジェクトの位置づけ",
+      "プロダクト深掘り"
+    ],
+    "prompt": "10.4 本プロジェクトはモジュラモノリスか？",
+    "answer": "答え: No。本プロジェクトはマイクロサービスアーキテクチャに該当する。\n\n根拠:",
+    "keyPoints": [
+      "答え: No",
+      "本プロジェクトはマイクロサービスアーキテクチャに該当する"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580eab30bf1557bf18552",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580eab30bf1557bf18552-003",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "10.5 ただし、各サービス内部はモジュラモノリス的構造を持つ",
+      "モジュラモノリスと本プロジェクトの位置づけ",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「10.5 ただし、各サービス内部はモジュラモノリス的構造を持つ」について説明してください",
+    "answer": "例えば launchpad-backend 内に play, catalog, purchase 等の複数コンポーネントが存在し、それぞれがUI層/Usecase層/Domain層/Infra層を持つ構造は、1つのサービス内でモジュール境界を定義するモジュラモノリス的アプローチ。",
+    "sourceId": "source-product-deep-dive-365c019fa92580eab30bf1557bf18552",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580eab30bf1557bf18552-004",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "10.6 面接での答え方",
+      "モジュラモノリスと本プロジェクトの位置づけ",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「10.6 面接での答え方」について説明してください",
+    "answer": "「モジュラモノリスとの違いは何ですか？」\n\n回答例:\n\n「プロジェクト全体としてはマイクロサービスです。BFF、バックエンド、プロキシがそれぞれ独立したリポジトリ・デプロイ・プロセスで動いており、gRPCで通信しています。ただし、各サービスの内部はplay、catalog、purchaseなどのコンポーネントに分かれており、レイヤードアーキテクチャに従った境界を持っているので、サービス内部はモジュラモノリス的な構造とも言えます。」\n\n「モジュラモノリスの方がよかったのでは？」\n\n回答例:\n\n「モジュラモノリスなら分散トランザクションやネットワークレイテンシの問題は避けられますが、私たちのケースでは3つの理由でマイクロサービスを選んでいます。第一に、BFF（GraphQL）とバックエンド（gRPC）では技術要件が根本的に異なるため同一プロセスに入れるメリットが薄い。第二に、コンポーネントごとにトラフィック特性が大きく異なる（再生系は高頻度、購入系は低頻度だがトランザクション重要）ため、個別スケーリングが必要。第三に、チームの独立性を確保し、各チームが自律的にデプロイ・リリースできることを重視しています。」",
+    "keyPoints": [
+      "「モジュラモノリスとの違いは何ですか？」",
+      "回答例:",
+      "「モジュラモノリスの方がよかったのでは？」",
+      "回答例:"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580eab30bf1557bf18552",
+    "difficulty": 3
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580feaed0ee48332af271-000",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "11.1 アーキテクチャ全般",
+      "面接で聞かれる技術深掘り質問と回答",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「11.1 アーキテクチャ全般」について説明してください",
+    "answer": "Q: 「なぜクリーンアーキテクチャを採用したのですか？過剰設計ではないですか？」\n\n回答のポイント:\n\n動画配信サービスは長期運用が前提。DBやキャッシュの入れ替え、外部API変更は現実に起こる\n\n具体例: Spannerのスキーマ変更やValkeyの導入時に、Usecase層やDomain層のコードを一切変更せずにInfra層だけ修正できた\n\n過剰設計への反論: Domain層が薄い（ドメインモデル貧血症）という課題は認識しており、逆にクリーンアーキテクチャの本来の意図に近づけるためにDomain層を充実させる方向にリファクタリング中\n\nもし小規模サービスなら: クリーンアーキテクチャは不要。3層アーキテクチャで十分。技術選択は規模に応じて変えるべき\n\nQ: 「ドメインモデル貧血症とは何ですか？どう対処していますか？」\n\n回答のポイント:\n\nドメインモデル貧血症: Domain層のエンティティがgetter/setterだけのデータ構造になり、ビジネスロジックがUsecase層に漏れ出している状態。Martin Fowlerが指摘したアンチパターン\n\n現状の問題: バリデーションやビジネスルールがUsecase層に散らばっており、同じルールを複数のUsecaseで重複実装するリスクがある\n\n対処: ビジネスバリデーション（期間整合性チェック、重複チェック等）をDomain層のエンティティやValue Objectに移動中。エンティティが自身の有効性を保証できるようにする\n\nQ: 「型変換が2段階あるのは冗長では？1回でよいのでは？」\n\n回答のポイント:\n\n1回変換にすると Protocol Buffers の型がDomain層またはUsecase層に漏れる\n\nPB → Model を UI層でやるとUsecase層がprotobuf型に依存する\n\nPB → Model をUsecase層でやるとDomain層がprotobuf型に依存する\n\n2段階変換により各層の独立性が保たれ、protobufのバージョンアップやスキーマ変更の影響がUI層に閉じ込められる\n\nトレードオフ: 確かに詰め替えコードは多い。新しいフィールド追加時に抜け漏れが出やすいので、将来的にprotobufからDTO構造体を自動生成するカスタムプラグインの検討もしている",
+    "sourceId": "source-product-deep-dive-365c019fa92580feaed0ee48332af271",
+    "difficulty": 3
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580feaed0ee48332af271-001",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Go",
+      "11.2 Go言語",
+      "面接で聞かれる技術深掘り質問と回答",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「11.2 Go言語」について説明してください",
+    "answer": "Q: 「Goにジェネリクスがないときはどうしていましたか？Go 1.18以降で何が変わりましたか？」\n\n回答のポイント:\n\nGo 1.18以前: interface{} (any) で型安全性を犠牲にするか、コード生成で対応\n\nGo 1.18以降: 型パラメータにより汎用的なユーティリティ関数やデータ構造が型安全に書けるようになった\n\nただしGoのジェネリクスは意図的に制約が強い（メソッドに型パラメータを持てない等）。Javaのような高度なジェネリクス活用は想定されていない\n\nプロジェクトでは主にスライス操作のユーティリティ等で活用。ドメインロジックに多用はしていない\n\nQ: 「Goのエラーハンドリングは冗長だと思いませんか？」\n\n回答のポイント:\n\n冗長なのは事実。if err != nil が全体コードの30%近くを占めることもある\n\nしかし明示的であることがメリット。エラーがどこで発生しどう伝播するかがコードを読むだけで完全にわかる\n\nJava/TypeScriptの例外は「どの関数がどの例外を投げるか」がコードから読み取れない（Checked Exceptionを除く）\n\nfmt.Errorf(\"context: %w\", err) でコンテキストを付与しながらエラーチェーンを構築でき、デバッグ時に「どのパスで失敗したか」が明確\n\nRustとの比較: Rustの?演算子なら let product = repo.find_by_id(id)?; と1行で書ける。Goにこの構文がないのは言語設計の意図的な選択\n\nQ: 「Goのcontext.Contextは何のためにありますか？」\n\n回答のポイント:\n\nキャンセル伝播: HTTPリクエストがタイムアウトしたとき、そのリクエストに紐づくSpannerクエリやgRPC呼び出しもすべてキャンセルされる\n\nデッドライン: context.WithTimeout(ctx, 5*time.Second) で下流の処理に時間制限をかけられる\n\n値の伝播: リクエストIDやユーザーIDなど、リクエストスコープの値を引き回す（ただし乱用注意）\n\nマイクロサービスでは1つのリクエストが複数サービスを横断するため、context経由のキャンセル伝播が不可欠。これがないと、クライアントが切断してもバックエンドが無駄な処理を続けてしまう",
+    "sourceId": "source-product-deep-dive-365c019fa92580feaed0ee48332af271",
+    "difficulty": 3
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580feaed0ee48332af271-002",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "11.3 データベース / キャッシュ",
+      "面接で聞かれる技術深掘り質問と回答",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「11.3 データベース / キャッシュ」について説明してください",
+    "answer": "Q: 「Spannerのホットスポット問題にどう対処していますか？」\n\n回答のポイント:\n\nSpannerは主キーのレンジでデータを分散する。連番ID（1, 2, 3...）だと全書き込みが同じノードに集中する\n\n対策: UUID v4やビットリバースIDを主キーに使用。これによりキーが均一に分散する\n\nインターリーブ: 作品→エピソードのような親子関係では、親の主キーをプレフィックスに含むインターリーブテーブルを使い、JOINを物理的に同一ノード内で完結させる\n\nステイルリード: カタログ情報のように数秒の遅延が許容できる読み取りには ExactStaleness(10 * time.Second) を使い、最新データへのロックを回避\n\nQ: 「キャッシュの整合性はどう担保していますか？」\n\n回答のポイント:\n\nCache-Asideパターン: 読み取り時にキャッシュ → ミスならSpanner → キャッシュに保存\n\n問題: 書き込み後にキャッシュが古いデータを返す期間（stale window）が存在する\n\n対策1: 書き込み時にキャッシュを即座に無効化（Cache Invalidation）\n\n対策2: TTLを短く設定し、最悪でもTTL秒後には最新データに更新される\n\n対策3: 強い整合性が必要なデータ（購入情報、残高等）はキャッシュしない。Spannerに直接アクセス\n\nThundering Herd問題: TTL切れ時に大量のリクエストが同時にSpannerに殺到する問題。対策としてランダムTTL（基本TTL ± 乱数）やSingleflightパターン（同一キーの並行リクエストを1つにまとめる）を使う\n\nQ: 「CAP定理を踏まえて、Spannerはどこに位置しますか？」\n\n回答のポイント:\n\nCAP定理: 分散システムはConsistency（一貫性）、Availability（可用性）、Partition tolerance（分断耐性）の3つのうち2つしか同時に満たせない\n\n理論的にはCP: Spannerはネットワーク分断時に一貫性を優先する（CAP定理上はCPシステム）\n\n実質的にはCAP全部に近い: TrueTimeによる時刻同期 + Paxosによる合意 + グローバル分散により、ネットワーク分断が極めて稀。99.999%の可用性を実現しているため、実用上はCAPの制約をほぼ感じない\n\n重要なニュアンス: 「CAP定理を超えた」のではなく「分断が起きにくいネットワーク環境を構築することで、CPシステムでありながら高可用性を実現している」",
+    "keyPoints": [
+      "Q: 「Spannerのホットスポット問題にどう対処していますか",
+      "」\n\n回答のポイント:\n\nSpannerは主キーのレンジでデータを分散する",
+      "連番ID（1, 2, 3...）だと全書き込みが同じノードに集中する\n\n対策: UUID v4やビットリバースIDを主キーに使用",
+      "Spannerに直接アクセス\n\nThundering Herd問題: TTL切れ時に大量のリクエストが同時にSpannerに殺到する問題",
+      "対策としてランダムTTL（基本TTL ± 乱数）やSingleflightパターン（同一キーの並行リクエストを1つにまとめる）を使う\n\nQ: 「CAP定理を踏まえて、Spannerはどこに位置しますか"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580feaed0ee48332af271",
+    "difficulty": 3
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580feaed0ee48332af271-003",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "11.4 マイクロサービス / 分散システム",
+      "面接で聞かれる技術深掘り質問と回答",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「11.4 マイクロサービス / 分散システム」について説明してください",
+    "answer": "Q: 「サービス間でデータ整合性をどう保っていますか？」\n\n回答のポイント:\n\n同一サービス内: Spannerの分散トランザクション（ACIDが保証される）\n\nサービス間: Pub/Subによる結果整合性（Eventual Consistency）\n\nSagaパターン: 複数サービスにまたがるトランザクション（例: 購入→再生権限付与）では、各ステップが完了したらイベントを発行し、失敗した場合は補償トランザクション（compensating transaction）で巻き戻す\n\n具体例: 「購入完了」→ Pub/Sub → 「再生権限付与サービスがSubscribe」→ 成功。もし権限付与が失敗したらDead Letter Queue → リトライ → 最終的に人間が確認\n\nQ: 「サービスがダウンしたらどうなりますか？」\n\n回答のポイント:\n\nサーキットブレーカー: 下流サービスの障害を検知したら、一定時間リクエストを送らない。連鎖障害（カスケード障害）を防止\n\nタイムアウト + リトライ: gRPCクライアントにタイムアウト設定 + 冪等な操作に対してエクスポネンシャルバックオフ付きリトライ\n\nフォールバック: カタログ情報が取得できない場合、キャッシュから古いデータを返す（degraded mode）\n\nDatadogによる監視: 分散トレーシングでどのサービスがボトルネックか特定。レイテンシ悪化やエラー率上昇をアラート\n\nQ: 「分散トレーシングはどう実現していますか？」\n\n回答のポイント:\n\nDatadog APM: リクエストがBFF → Backend → Spanner と横断する際、各区間（Span）の処理時間と依存関係を可視化\n\ncontext.Context経由でTrace IDを伝播: gRPCのメタデータにTrace IDを載せ、サービス間で引き継ぐ\n\nボトルネック特定: 「作品詳細画面が遅い」→ トレースを見ると「SpannerのJOINが3秒かかっている」→ インデックス追加で解決、という調査フロー",
+    "keyPoints": [
+      "Q: 「サービス間でデータ整合性をどう保っていますか",
+      "もし権限付与が失敗したらDead Letter Queue → リトライ → 最終的に人間が確認\n\nQ: 「サービスがダウンしたらどうなりますか",
+      "」\n\n回答のポイント:\n\nサーキットブレーカー: 下流サービスの障害を検知したら、一定時間リクエストを送らない",
+      "レイテンシ悪化やエラー率上昇をアラート\n\nQ: 「分散トレーシングはどう実現していますか"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580feaed0ee48332af271",
+    "difficulty": 3
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580feaed0ee48332af271-004",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "GraphQL",
+      "11.5 GraphQL / BFF",
+      "面接で聞かれる技術深掘り質問と回答",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「11.5 GraphQL / BFF」について説明してください",
+    "answer": "Q: 「GraphQLのN+1問題をどう解決していますか？」\n\n回答のポイント:\n\nDataLoaderパターン: 個別にフェッチするのではなく、同一ティック（イベントループの1サイクル）内のリクエストをバッチ化\n\n例: 作品一覧で10件の作品を返す際、各作品の episodes フィールドが個別にバックエンドに問い合わせると10回のgRPC呼び出し → DataLoaderが10件のIDを集めて1回のバッチリクエストに変換\n\n実装: 各リゾルバがDataLoaderにIDをロードリクエストし、DataLoaderがバッチウィンドウ（通常数ms）を待ってから一括フェッチ\n\nQ: 「BFFパターンのメリット・デメリットは？」\n\n回答のポイント:\n\nメリット:\n\nフロントエンドの要件に最適化されたAPIを提供できる（画面ごとに必要なデータを1回で取得）\n\nバックエンドの内部構造をクライアントから隠蔽\n\nモバイル向け / Web向けで異なるBFFを用意できる\n\nバックエンドAPIの変更がクライアントに直接影響しない（BFFが吸収）\n\nデメリット:\n\nBFF自体が開発・運用の追加コスト\n\nBFFがボトルネック/単一障害点になるリスク\n\nバックエンドの変更に追従するためBFFの更新も必要（結局2箇所変更になる場合がある）\n\nQ: 「RESTではなくGraphQLを選んだ決め手は？」\n\n回答のポイント:\n\n動画配信サービスは画面ごとに必要なデータの粒度が大きく異なる\n\n一覧: サムネイル + タイトル（2フィールド）\n\n詳細: キャスト、シーズン、エピソード、レビュー、関連作品（数十フィールド）\n\n再生: ライセンス情報、再生URL、字幕、マルチアングル情報\n\nRESTだと各画面用のエンドポイント（/products/summary, /products/detail, /products/playback）を作るか、全部入りのエンドポイントでOver-fetchingするか\n\nGraphQLならクライアントが { product { title thumbnail } } や { product { title cast seasons { episodes } } } と指定するだけで最適なデータが返る\n\nモバイルアプリのリリースサイクル: モバイルはアプリストアの審査があり頻繁にリリースできない。新しいフィールドが必要になったとき、RESTだと新エンドポイント追加 + アプリ更新が必要だが、GraphQLなら既存スキーマにフィールドを追加するだけでアプリ側の変更なしに取得できる",
+    "keyPoints": [
+      "Q: 「GraphQLのN+1問題をどう解決していますか",
+      "新しいフィールドが必要になったとき、RESTだと新エンドポイント追加 + アプリ更新が必要だが、GraphQLなら既存スキーマにフィールドを追加するだけでアプリ側の変更なしに取得できる"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580feaed0ee48332af271",
+    "difficulty": 3
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580feaed0ee48332af271-005",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "11.6 設計判断 / トレードオフ",
+      "面接で聞かれる技術深掘り質問と回答",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「11.6 設計判断 / トレードオフ」について説明してください",
+    "answer": "Q: 「このプロジェクトで一番難しかった技術的な課題は？」\n\n回答の組み立て方（STAR法）:",
+    "keyPoints": [
+      "Q: 「このプロジェクトで一番難しかった技術的な課題は？」",
+      "回答の組み立て方（STAR法）:"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580feaed0ee48332af271",
+    "difficulty": 1
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580feaed0ee48332af271-006",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "Situation: どんな状況だったか",
+      "面接で聞かれる技術深掘り質問と回答",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「Situation: どんな状況だったか」について説明してください",
+    "answer": "Task: 何を達成する必要があったか\n\nAction: 自分は具体的に何をしたか\n\nResult: 結果どうなったか\n\n例（自分の経験に置き換えること）:\n\n「Usecase層からInfra層のgRPCクライアントを直接参照しているコンポーネントがあり、テストが困難で変更の影響範囲が予測できない状態でした。アーキテクチャ設計ルールを策定し、Domain層にリポジトリインターフェースを定義する方針を決め、依存が少ないコンポーネントから段階的にリファクタリングしました。結果として、テストカバレッジが向上し、Infra層の変更がUsecase層に波及しなくなりました。」\n\nQ: 「技術的負債にどう向き合っていますか？」\n\n回答のポイント:\n\nプロジェクトで認識されている技術的負債:\n\nUsecase層からInfra層を直接参照している箇所\n\nDomain層のリポジトリインターフェースがInfra型に依存している箇所\n\nDomain層が薄い（ドメインモデル貧血症）\n\nUI層の入力バリデーションが手動実装（protovalidateに移行中）\n\n対処方針: 新機能開発と並行して、依存が少ないコンポーネントから段階的にリファクタリング。一括で書き直すのではなく、Strangler Figパターン的に徐々に新しいパターンに移行\n\n仕組み化: architecture-design-rule.mdとしてルールを明文化し、CodeRabbitでPRレビュー時に自動検知\n\nQ: 「もう一度最初から設計するとしたら、何を変えますか？」\n\n回答の方向性（正解はない。自分の考えを述べること）:\n\nDomain層をもっと最初からリッチにする。貧血モデルの蓄積は後からの修正コストが高い\n\nプロジェクト初期からアーキテクチャルールを明文化しておく。チームが成長してからルールを後追いで定めると、既存コードとの乖離が大きくなる\n\nテスト戦略（単体 / 統合 / E2E の比率）をもっと早い段階で決めておく",
+    "sourceId": "source-product-deep-dive-365c019fa92580feaed0ee48332af271",
+    "difficulty": 3
+  },
+  {
+    "id": "notion-product-deep-dive-365c019fa92580feaed0ee48332af271-007",
+    "questionSet": "notion",
+    "category": "product-deep-dive",
+    "tags": [
+      "11.7 「なぜその技術ですか？」即答集",
+      "面接で聞かれる技術深掘り質問と回答",
+      "プロダクト深掘り"
+    ],
+    "prompt": "「11.7 「なぜその技術ですか？」即答集」について説明してください",
+    "answer": "面接では「なぜX？」「Yではダメ？」という形式の質問が多い。以下は即答用のまとめ。",
+    "keyPoints": [
+      "面接では「なぜX",
+      "」「Yではダメ",
+      "」という形式の質問が多い",
+      "以下は即答用のまとめ"
+    ],
+    "sourceId": "source-product-deep-dive-365c019fa92580feaed0ee48332af271",
+    "difficulty": 1
+  }
+]

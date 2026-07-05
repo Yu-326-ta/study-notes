@@ -1,0 +1,37 @@
+[
+  {
+    "id": "source-related-spanner",
+    "questionSet": "related",
+    "title": "Spanner / TrueTime 参考",
+    "url": "https://cloud.google.com/spanner/docs/true-time-external-consistency",
+    "excerpt": "Spanner uses TrueTime API backed by GPS and atomic clocks. External consistency ensures transactions appear to commit at the same timestamp globally. Spanner provides serializability and external consistency, trading off some availability during clock uncertainty."
+  },
+  {
+    "id": "source-related-pubsub",
+    "questionSet": "related",
+    "title": "Google Cloud Pub/Sub 参考",
+    "url": "https://cloud.google.com/pubsub/docs/overview",
+    "excerpt": "Pub/Sub is an asynchronous messaging service. At-least-once delivery is default. Ordering keys guarantee order for messages with the same key. Subscribers ack messages to remove them from the subscription."
+  },
+  {
+    "id": "source-related-valkey",
+    "questionSet": "related",
+    "title": "Valkey / Redis 参考",
+    "url": "https://valkey.io/",
+    "excerpt": "Valkey is an open-source fork of Redis. Used for in-memory caching, session storage, and pub/sub. Cache-aside pattern: read cache first, on miss read DB and populate cache."
+  },
+  {
+    "id": "source-related-go-gc",
+    "questionSet": "related",
+    "title": "Go GC 参考",
+    "url": "https://go.dev/blog/ismmkeynote",
+    "excerpt": "Go uses a non-generational, non-compacting concurrent mark-and-sweep collector. STW phases are kept very short. Throughput-oriented design suitable for low-latency services."
+  },
+  {
+    "id": "source-related-cap",
+    "questionSet": "related",
+    "title": "CAP 定理 参考",
+    "url": "https://en.wikipedia.org/wiki/CAP_theorem",
+    "excerpt": "CAP theorem states a distributed system can provide at most two of: Consistency, Availability, Partition tolerance. During network partition, systems choose CP or AP tradeoffs."
+  }
+]
