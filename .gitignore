@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Notion export（アプリ対象外カテゴリ・誤出力パス）
+scripts/notion-export/output/questions/company.json
+scripts/notion-export/output/questions/leetcode.json
+scripts/notion-export/output/questions/resume.json
+scripts/notion-export/output/questions/notion/
+scripts/notion-export/output/sources/company.json
+scripts/notion-export/output/sources/leetcode.json
+scripts/notion-export/output/sources/resume.json
