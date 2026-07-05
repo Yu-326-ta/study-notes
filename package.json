@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "export:notion": "node scripts/notion-export/export.mjs",
+    "rebuild:questions": "node scripts/notion-export/rebuild-questions.mjs",
+    "fix:prompts": "node scripts/notion-export/fix-prompts.mjs"
   },
   "dependencies": {
     "next": "16.2.10",
