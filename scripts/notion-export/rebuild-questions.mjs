@@ -32,8 +32,13 @@ function sourcePageIdCompact(source) {
   return match ? match[1] : source.id;
 }
 
-/** @param {string} dir @param {string} category @param {string} sourcesSubdir */
-async function rebuildCategory(dir, category, sourcesSubdir) {
+/** @param {string} prompt */
+function normalizePromptKey(prompt) {
+  return prompt.replace(/[？?]$/, "").trim();
+}
+
+/** @param {string} dir @param {string} category @param {string} sourcesSubdir @param {Set<string>} [skipPromptKeys] */
+async function rebuildCategory(dir, category, sourcesSubdir, skipPromptKeys = new Set()) {
   const sourcesPath = path.join(dir, sourcesSubdir, `${category}.json`);
   const sources = JSON.parse(await readFile(sourcesPath, "utf8"));
 
@@ -49,11 +54,12 @@ async function rebuildCategory(dir, category, sourcesSubdir) {
     for (const card of cards) {
       if (card.answer.trim().length < 8) continue;
       const prompt = buildPrompt(card.topic, card.section);
+      if (skipPromptKeys.has(normalizePromptKey(prompt))) continue;
       questions.push({
         id: makeQuestionId(category, pageId, index++),
         questionSet: "notion",
         category,
-        tags: inferTags(source.title, card.section || card.topic, category),
+        tags: inferTags(source.title, card.section, category, card.topic),
         prompt,
         answer: card.answer,
         keyPoints: extractKeyPoints(card.answer),
@@ -85,7 +91,26 @@ async function main() {
       } catch {
         continue;
       }
-      const questions = await rebuildCategory(baseDir, category, sourcesSubdir);
+
+      /** @type {Set<string>} */
+      let skipPromptKeys = new Set();
+      if (category === "product-deep-dive" && baseDir.includes("src/data")) {
+        const interviewQuestions = await rebuildCategory(
+          baseDir,
+          "interview",
+          sourcesSubdir,
+        );
+        skipPromptKeys = new Set(
+          interviewQuestions.map((q) => normalizePromptKey(q.prompt)),
+        );
+      }
+
+      const questions = await rebuildCategory(
+        baseDir,
+        category,
+        sourcesSubdir,
+        skipPromptKeys,
+      );
       const outDir =
         baseDir.includes("output")
           ? path.join(baseDir, "questions")

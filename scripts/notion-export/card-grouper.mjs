@@ -41,11 +41,36 @@ export function isTopicLine(line) {
   }
   if (isExplicitQuestion(t)) return true;
   if (isChecklistItem(line)) return false;
-  if (/方法$|について$|経験$|違い$|選定|構成|アピール|特性とは|見る$/.test(t) && t.length <= 100) {
+  if (/方法$|について$|経験$|違い$|選定|特性とは|見る$/.test(t) && t.length <= 100) {
+    return true;
+  }
+  if (/アピール/.test(t) && t.length <= 60 && !/。/.test(t)) {
     return true;
   }
   if (/どんな/.test(t) && t.length <= 60) return true;
   if (/^\d+(?:\.\d+)*\s+\S/.test(t) && t.length <= 80) return true;
+  return false;
+}
+
+/** @param {string} line */
+export function isNumberedSectionHeader(line) {
+  const t = normalizeTopicLine(line);
+  if (/^Q:\s/.test(line.trim())) return false;
+  if (/^#{1,3}\s/.test(line.trim())) return false;
+  if (/^\d+(?:\.\d+)+\s+\S/.test(t) && !/[？?]$/.test(t)) return true;
+  return false;
+}
+
+/** @param {string} line */
+export function isDefinitionSectionHeader(line) {
+  const t = normalizeTopicLine(line);
+  if (!/^#{1,3}\s/.test(line.trim())) return false;
+  if (/^[①②③④⑤⑥⑦⑧⑨⑩]/.test(t)) return false;
+  if (/^\d+(?:\.\d+)+\s/.test(t)) return true;
+  if (/とは$/.test(t)) return true;
+  if (/^比較:/.test(t)) return true;
+  if (/^「/.test(t) && /[？」?]$/.test(t)) return true;
+  if (/代償|コスト/.test(t)) return true;
   return false;
 }
 
@@ -55,6 +80,7 @@ export function isSectionContextHeader(line) {
   if (!/^#{1,3}\s/.test(line.trim())) return false;
   if (/^[①②③④⑤⑥⑦⑧⑨⑩]/.test(t)) return false;
   if (/^\d+(?:\.\d+)+\s/.test(t)) return false;
+  if (isDefinitionSectionHeader(line)) return false;
   if (/^(ACIDの内訳|[A-Z]：)/i.test(t)) return true;
   if (t.length <= 14 && !/\d/.test(t)) return true;
   return false;
@@ -90,8 +116,33 @@ export function parseExcerptIntoCards(excerpt) {
   }
 
   for (const line of blocks) {
+    if (isNumberedSectionHeader(line)) {
+      section = normalizeTopicLine(line);
+      continue;
+    }
+
     if (isSectionContextHeader(line)) {
       section = normalizeTopicLine(line);
+      continue;
+    }
+
+    if (isDefinitionSectionHeader(line)) {
+      flush();
+      current = {
+        topic: normalizeTopicLine(line),
+        section,
+        answerLines: [],
+      };
+      continue;
+    }
+
+    if (/^Q:\s/.test(line.trim())) {
+      flush();
+      current = {
+        topic: line.trim().replace(/^Q:\s*/, ""),
+        section,
+        answerLines: [],
+      };
       continue;
     }
 
@@ -127,6 +178,14 @@ export function buildPrompt(topic, section) {
   const t = topic.trim();
   if (!t) return "内容を説明してください";
 
+  const quotedMatch = t.match(/^「(.+)」$/);
+  if (quotedMatch) {
+    const inner = quotedMatch[1].trim();
+    if (isExplicitQuestion(inner) || /[？?]$/.test(inner)) {
+      return /[？?]$/.test(inner) ? inner : `${inner}？`;
+    }
+  }
+
   if (isExplicitQuestion(t)) {
     if (/[？?]$/.test(t)) return t;
     return `${t.replace(/[。．]$/, "")}？`;
@@ -149,11 +208,12 @@ export function buildPrompt(topic, section) {
  * @param {string} title
  * @param {string} section
  * @param {string} category
+ * @param {string} [topic]
  */
-export function inferTags(title, section, category) {
+export function inferTags(title, section, category, topic = "") {
   /** @type {string[]} */
   const tags = [];
-  const combined = `${title} ${section} ${category}`;
+  const combined = `${title} ${section} ${topic} ${category}`;
   const patterns = [
     ["Go", /\bGo\b|ゴー言語/i],
     ["Spanner", /Spanner/i],
@@ -164,15 +224,21 @@ export function inferTags(title, section, category) {
     ["PR", /PRレビュー|プルリク/i],
     ["GC", /\bGC\b|ガベージ/i],
     ["ACID", /ACID/i],
+    ["SOLID", /SOLID/i],
   ];
   for (const [tag, re] of patterns) {
     if (re.test(combined)) tags.push(tag);
   }
   if (section && section.length <= 40 && !tags.includes(section)) {
-    tags.push(section);
+    if (!/^(実務的な使い分け|ACIDの内訳)$/.test(section)) {
+      tags.push(section);
+    }
   }
   if (title && title.length <= 40 && !tags.includes(title)) {
     tags.push(title);
+  }
+  if (/SOLID/i.test(`${title} ${section} ${combined}`) && !tags.includes("SOLID")) {
+    tags.unshift("SOLID");
   }
   const categoryLabel = category === "interview" ? "質問集" : "プロダクト深掘り";
   if (!tags.includes(categoryLabel)) tags.push(categoryLabel);
@@ -184,12 +250,12 @@ export function extractKeyPoints(text) {
   const lines = text
     .split(/\n+/)
     .map((l) => l.replace(/^[-•・👉\s]*/, "").trim())
-    .filter((l) => l.length >= 4 && l.length <= 120);
-  if (lines.length >= 2 && lines.length <= 8) return lines;
+    .filter((l) => l.length >= 4 && l.length <= 200 && !/^例$|^↑/.test(l));
+  if (lines.length >= 1) return lines.slice(0, 8);
   const sentences = text
     .split(/[。．!！?？]\s*/)
     .map((s) => s.trim())
-    .filter((s) => s.length >= 4 && s.length <= 100);
-  if (sentences.length >= 2 && sentences.length <= 5) return sentences;
+    .filter((s) => s.length >= 4 && s.length <= 120);
+  if (sentences.length >= 1) return sentences.slice(0, 5);
   return undefined;
 }
