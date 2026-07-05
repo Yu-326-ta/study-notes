@@ -1,0 +1,17 @@
+{
+  "interview": {
+    "label": "質問集",
+    "sources": 1,
+    "questions": 17
+  },
+  "product-deep-dive": {
+    "label": "プロダクト深掘り",
+    "sources": 14,
+    "questions": 40
+  },
+  "_totals": {
+    "sources": 15,
+    "questions": 57,
+    "pagesVisited": 15
+  }
+}
