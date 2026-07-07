@@ -181,8 +181,8 @@ function Toggle({
         }`}
       >
         <span
-          className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
-            checked ? "translate-x-5" : "translate-x-0.5"
+          className={`absolute top-0.5 size-6 rounded-full bg-white shadow transition-[left] duration-200 ease-in-out ${
+            checked ? "left-[calc(100%-1.625rem)]" : "left-0.5"
           }`}
         />
       </button>
