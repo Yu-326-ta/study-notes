@@ -9,6 +9,7 @@
     "lint": "eslint",
     "export:notion": "node scripts/notion-export/export.mjs",
     "rebuild:questions": "node scripts/notion-export/rebuild-questions.mjs",
+    "build:systemdesign": "node scripts/systemdesign/build.mjs",
     "fix:prompts": "node scripts/notion-export/fix-prompts.mjs"
   },
   "dependencies": {
