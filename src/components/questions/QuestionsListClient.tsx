@@ -9,6 +9,7 @@ import {
   NOTION_CATEGORY_LABELS,
   ACTIVE_NOTION_CATEGORIES,
   QUESTION_SET_LABELS,
+  questionSetBadgeVariant,
 } from "@/domain/question";
 import {
   getAllQuestions,
@@ -80,18 +81,23 @@ export function QuestionsListClient() {
         )}
       </div>
 
-      <div className="flex gap-2">
-        {(["notion", "related"] as QuestionSet[]).map((set) => (
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {(["notion", "related", "systemdesign"] as QuestionSet[]).map((set) => (
           <button
             key={set}
             type="button"
-            onClick={() => setQuestionSet(set)}
+            onClick={() => {
+              setQuestionSet(set);
+              if (set !== "notion") setCategory("all");
+            }}
             className={cn(
-              "flex-1 rounded-xl py-2.5 text-sm font-medium min-h-[44px] transition-colors",
+              "shrink-0 rounded-xl px-4 py-2.5 text-sm font-medium min-h-[44px] transition-colors",
               questionSet === set
                 ? set === "notion"
                   ? "bg-[var(--primary)] text-white"
-                  : "bg-[var(--related)] text-white"
+                  : set === "related"
+                    ? "bg-[var(--related)] text-white"
+                    : "bg-emerald-600 text-white"
                 : "bg-[var(--card)] border border-[var(--border)]"
             )}
           >
@@ -99,6 +105,19 @@ export function QuestionsListClient() {
           </button>
         ))}
       </div>
+
+      {questionSet === "systemdesign" && (
+        <Link
+          href="/systemdesign"
+          className="flex min-h-[44px] items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-4 py-3 text-sm transition-colors hover:border-emerald-500/50"
+        >
+          <span aria-hidden>📖</span>
+          <span className="flex-1 font-medium text-emerald-800 dark:text-emerald-300">
+            まとめ資料を読む（問題一覧とは別）
+          </span>
+          <span className="text-emerald-700 dark:text-emerald-400">→</span>
+        </Link>
+      )}
 
       <input
         type="search"
@@ -162,7 +181,13 @@ export function QuestionsListClient() {
                 <div className="flex shrink-0 items-center gap-0">
                   {source && (
                     <Link
-                      href={`/sources/${source.id}`}
+                      href={
+                        source.questionSet === "systemdesign" && source.slug
+                          ? q.sectionId
+                            ? `/systemdesign/${source.slug}/${q.sectionId}`
+                            : `/systemdesign/${source.slug}`
+                          : `/sources/${source.id}`
+                      }
                       className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[var(--source)] hover:bg-[var(--source)]/10"
                       aria-label="資料を見る"
                     >

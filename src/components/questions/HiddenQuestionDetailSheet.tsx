@@ -4,6 +4,7 @@ import type { Question } from "@/domain/question";
 import {
   NOTION_CATEGORY_LABELS,
   QUESTION_SET_LABELS,
+  questionSetBadgeVariant,
 } from "@/domain/question";
 import { getSourceForQuestion } from "@/lib/data";
 import { restoreQuestion } from "@/lib/question-customizations";
@@ -58,10 +59,11 @@ export function HiddenQuestionDetailSheet({
         </div>
 
         <div className="mb-4 flex flex-wrap gap-2">
-          <Badge variant={question.questionSet === "notion" ? "notion" : "related"}>
+          <Badge variant={questionSetBadgeVariant(question.questionSet)}>
             {QUESTION_SET_LABELS[question.questionSet]}
           </Badge>
-          {question.category && (
+          {(question.category === "interview" ||
+            question.category === "product-deep-dive") && (
             <Badge variant="tag">{NOTION_CATEGORY_LABELS[question.category]}</Badge>
           )}
         </div>

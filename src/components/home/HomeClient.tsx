@@ -25,15 +25,23 @@ export function HomeClient() {
 
     const notionProgress = loadProgress("notion");
     const relatedProgress = loadProgress("related");
+    const systemDesignProgress = loadProgress("systemdesign");
     const settings = loadSettings();
     const streak = getStreak();
     const notionQuestions = getAllQuestions("notion");
     const relatedQuestions = getAllQuestions("related");
+    const systemDesignQuestions = getAllQuestions("systemdesign");
 
     const dueNotion = countByMode(notionQuestions, notionProgress, "due-today");
     const newNotion = countByMode(notionQuestions, notionProgress, "new");
     const dueRelated = countByMode(relatedQuestions, relatedProgress, "due-today");
     const newRelated = countByMode(relatedQuestions, relatedProgress, "new");
+    const dueSystemDesign = countByMode(
+      systemDesignQuestions,
+      systemDesignProgress,
+      "due-today"
+    );
+    const newSystemDesign = countByMode(systemDesignQuestions, systemDesignProgress, "new");
     const weakTags = getWeakTagsFromNotionProgress(notionProgress, 3);
     const tagLinkedRelated = selectQuestions(
       relatedQuestions,
@@ -51,6 +59,9 @@ export function HomeClient() {
       newNotion,
       dueRelated,
       newRelated,
+      dueSystemDesign,
+      newSystemDesign,
+      systemDesignQuestions,
       weakTags,
       tagLinkedRelated,
       weakCount: countByMode(notionQuestions, notionProgress, "weak"),
@@ -70,6 +81,9 @@ export function HomeClient() {
     newNotion,
     dueRelated,
     newRelated,
+    dueSystemDesign,
+    newSystemDesign,
+    systemDesignQuestions,
     weakTags,
     tagLinkedRelated,
     weakCount,
@@ -97,6 +111,25 @@ export function HomeClient() {
           🔥 {streak} 日連続学習中
         </div>
       )}
+
+      <Link
+        href="/systemdesign"
+        className="block rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-5 transition-colors hover:border-emerald-500/60 hover:bg-emerald-500/15"
+      >
+        <div className="flex items-start gap-3">
+          <span className="text-2xl" aria-hidden>
+            📖
+          </span>
+          <div>
+            <p className="font-semibold text-emerald-800 dark:text-emerald-300">
+              システムデザイン資料を読む
+            </p>
+            <p className="mt-1 text-sm text-[var(--muted)]">
+              章ごとのまとめを、問題を解かずに閲覧できます
+            </p>
+          </div>
+        </div>
+      </Link>
 
       <section className="space-y-3">
         <h2 className="text-sm font-semibold text-[var(--muted)]">本編問題集（優先）</h2>
@@ -166,6 +199,26 @@ export function HomeClient() {
         </div>
       </section>
 
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold text-[var(--muted)]">システムデザイン</h2>
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5">
+          <p className="text-sm text-[var(--muted)]">
+            復習 {dueSystemDesign} 問 / 未学習 {newSystemDesign} 問（全{" "}
+            {systemDesignQuestions.length} 問）
+          </p>
+          <div className="mt-4 flex flex-col gap-2">
+            <Link href="/study?set=systemdesign&mode=due-today">
+              <Button size="lg">システムデザインを学ぶ</Button>
+            </Link>
+            <Link href="/systemdesign">
+              <Button variant="ghost" size="md">
+                資料だけ読む
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {settings.mixedMode && (
         <section>
           <Link href="/study?set=mixed&mode=due-today">
@@ -176,12 +229,20 @@ export function HomeClient() {
         </section>
       )}
 
-      <Link
-        href="/sources"
-        className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--source)]/30 bg-[var(--source)]/5 py-3 text-sm font-medium text-[var(--source)]"
-      >
-        📎 資料一覧を見る
-      </Link>
+      <div className="grid gap-2 sm:grid-cols-2">
+        <Link
+          href="/systemdesign"
+          className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/5 py-3 text-sm font-medium text-emerald-700 dark:text-emerald-400"
+        >
+          📖 システムデザイン資料
+        </Link>
+        <Link
+          href="/sources"
+          className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--source)]/30 bg-[var(--source)]/5 py-3 text-sm font-medium text-[var(--source)]"
+        >
+          📎 引用元一覧
+        </Link>
+      </div>
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm">
         <p className="text-[var(--muted)]">本編の定着率</p>

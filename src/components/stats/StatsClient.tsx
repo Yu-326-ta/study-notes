@@ -13,9 +13,15 @@ export function StatsClient() {
   const streak = getStreak();
   const notionStats = computeStats("notion", loadProgress("notion"), streak);
   const relatedStats = computeStats("related", loadProgress("related"), streak);
+  const systemDesignStats = computeStats(
+    "systemdesign",
+    loadProgress("systemdesign"),
+    streak
+  );
   const heatmap = getLast7DaysHeatmap({
     ...notionStats.heatmap,
     ...relatedStats.heatmap,
+    ...systemDesignStats.heatmap,
   });
   const maxHeat = Math.max(...heatmap.map((d) => d.count), 1);
 
@@ -58,6 +64,7 @@ export function StatsClient() {
 
       <StatsBlock title="本編問題集" stats={notionStats} />
       <StatsBlock title="周辺知識問題集" stats={relatedStats} />
+      <StatsBlock title="システムデザイン" stats={systemDesignStats} />
     </div>
   );
 }

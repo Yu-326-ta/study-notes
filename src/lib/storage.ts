@@ -144,7 +144,11 @@ export function recordAnswer(
 export type ExportBundle = {
   version: 1;
   exportedAt: string;
-  progress: { notion: StudyProgress; related: StudyProgress };
+  progress: {
+    notion: StudyProgress;
+    related: StudyProgress;
+    systemdesign: StudyProgress;
+  };
   settings: StudySettings;
   streak: { streakDays: number; lastDate: string };
   customizations: QuestionCustomizations;
@@ -158,6 +162,7 @@ export function exportAllData(): ExportBundle {
     progress: {
       notion: loadProgress("notion"),
       related: loadProgress("related"),
+      systemdesign: loadProgress("systemdesign"),
     },
     settings: loadSettings(),
     streak: streakRaw
@@ -171,6 +176,9 @@ export function importAllData(bundle: ExportBundle): void {
   if (!isBrowser()) return;
   saveProgress(bundle.progress.notion);
   saveProgress(bundle.progress.related);
+  if (bundle.progress.systemdesign) {
+    saveProgress(bundle.progress.systemdesign);
+  }
   saveSettings(bundle.settings);
   localStorage.setItem(STREAK_KEY, JSON.stringify(bundle.streak));
   if (bundle.customizations) {

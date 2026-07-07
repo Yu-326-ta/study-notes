@@ -8,6 +8,7 @@ import type { QuestionSet } from "@/domain/question";
 import {
   NOTION_CATEGORY_LABELS,
   QUESTION_SET_LABELS,
+  questionSetBadgeVariant,
 } from "@/domain/question";
 import { getHiddenQuestions } from "@/lib/data";
 import {
@@ -112,19 +113,21 @@ export function HiddenQuestionsList({
           />
 
           <div className="flex gap-2">
-            {(["all", "notion", "related"] as const).map((set) => (
+            {(["all", "notion", "related", "systemdesign"] as const).map((set) => (
               <button
                 key={set}
                 type="button"
                 onClick={() => setQuestionSet(set)}
                 className={cn(
-                  "flex-1 rounded-xl py-2.5 text-sm font-medium min-h-[44px] transition-colors",
+                  "shrink-0 rounded-xl px-3 py-2.5 text-sm font-medium min-h-[44px] transition-colors",
                   questionSet === set
                     ? set === "notion"
                       ? "bg-[var(--primary)] text-white"
                       : set === "related"
                         ? "bg-[var(--related)] text-white"
-                        : "bg-[var(--foreground)] text-[var(--background)]"
+                        : set === "systemdesign"
+                          ? "bg-emerald-600 text-white"
+                          : "bg-[var(--foreground)] text-[var(--background)]"
                     : "bg-[var(--card)] border border-[var(--border)]"
                 )}
               >
@@ -163,10 +166,10 @@ export function HiddenQuestionsList({
             >
               <p className="line-clamp-3 text-sm font-medium">{q.prompt}</p>
               <div className="mt-2 flex flex-wrap gap-1">
-                <Badge variant={q.questionSet === "notion" ? "notion" : "related"}>
+                <Badge variant={questionSetBadgeVariant(q.questionSet)}>
                   {QUESTION_SET_LABELS[q.questionSet]}
                 </Badge>
-                {q.category && (
+                {(q.category === "interview" || q.category === "product-deep-dive") && (
                   <Badge variant="tag">{NOTION_CATEGORY_LABELS[q.category]}</Badge>
                 )}
               </div>

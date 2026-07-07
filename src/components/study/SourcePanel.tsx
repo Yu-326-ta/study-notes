@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { SourceDocument } from "@/domain/source";
 import { cn } from "@/lib/cn";
 
@@ -47,14 +48,23 @@ export function SourcePanel({
       <blockquote className="max-h-[40vh] overflow-y-auto border-l-4 border-[var(--source)] pl-4 text-sm italic text-[var(--foreground)]/90 whitespace-pre-wrap lg:max-h-none">
         {source.excerpt}
       </blockquote>
-      <a
-        href={source.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--source)]/30 bg-[var(--source)]/10 px-4 py-2 text-sm font-medium text-[var(--source)] transition-colors hover:bg-[var(--source)]/20"
-      >
-        外部で開く ↗
-      </a>
+      {source.url.startsWith("/") ? (
+        <Link
+          href={source.url}
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--source)]/30 bg-[var(--source)]/10 px-4 py-2 text-sm font-medium text-[var(--source)] transition-colors hover:bg-[var(--source)]/20"
+        >
+          資料を開く →
+        </Link>
+      ) : (
+        <a
+          href={source.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--source)]/30 bg-[var(--source)]/10 px-4 py-2 text-sm font-medium text-[var(--source)] transition-colors hover:bg-[var(--source)]/20"
+        >
+          外部で開く ↗
+        </a>
+      )}
     </div>
   );
 }

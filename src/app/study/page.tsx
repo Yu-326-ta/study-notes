@@ -29,7 +29,13 @@ function StudyPageInner() {
 
   const settings = loadSettings();
   const questionSet: QuestionSet | "mixed" =
-    setParam === "mixed" ? "mixed" : setParam === "related" ? "related" : "notion";
+    setParam === "mixed"
+      ? "mixed"
+      : setParam === "related"
+        ? "related"
+        : setParam === "systemdesign"
+          ? "systemdesign"
+          : "notion";
 
   const questions = useMemo(() => {
     if (!mounted) return [];

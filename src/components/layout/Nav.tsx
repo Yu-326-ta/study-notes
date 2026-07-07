@@ -5,10 +5,16 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 
 const NAV_ITEMS = [
-  { href: "/", label: "ホーム", icon: "🏠" },
-  { href: "/questions", label: "問題", icon: "📋" },
-  { href: "/sources", label: "資料", icon: "📎" },
-  { href: "/stats", label: "統計", icon: "📊" },
+  { href: "/", label: "ホーム", shortLabel: "ホーム", icon: "🏠" },
+  { href: "/questions", label: "問題", shortLabel: "問題", icon: "📋" },
+  {
+    href: "/systemdesign",
+    label: "システムデザイン",
+    shortLabel: "まとめ",
+    icon: "🏗️",
+  },
+  { href: "/sources", label: "資料", shortLabel: "資料", icon: "📎" },
+  { href: "/stats", label: "統計", shortLabel: "統計", icon: "📊" },
 ] as const;
 
 export function BottomNav() {
@@ -40,7 +46,7 @@ export function BottomNav() {
                 <span className="text-lg" aria-hidden>
                   {item.icon}
                 </span>
-                {item.label}
+                {item.shortLabel}
               </Link>
             </li>
           );

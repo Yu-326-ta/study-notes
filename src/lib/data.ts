@@ -12,10 +12,12 @@ import { weakScore, todayString } from "./srs";
 import notionInterview from "@/data/questions/notion/interview.json";
 import notionProductDeepDive from "@/data/questions/notion/product-deep-dive.json";
 import relatedGeneral from "@/data/questions/related/general.json";
+import systemDesignGeneral from "@/data/questions/systemdesign/general.json";
 
 import sourcesInterview from "@/data/sources/notion/interview.json";
 import sourcesProductDeepDive from "@/data/sources/notion/product-deep-dive.json";
 import sourcesRelated from "@/data/sources/related/general.json";
+import sourcesSystemDesign from "@/data/sources/systemdesign/index.json";
 
 const RAW_NOTION_QUESTIONS: Question[] = [
   ...(notionInterview as Question[]),
@@ -24,20 +26,25 @@ const RAW_NOTION_QUESTIONS: Question[] = [
 
 const RAW_RELATED_QUESTIONS: Question[] = relatedGeneral as Question[];
 
+const RAW_SYSTEMDESIGN_QUESTIONS: Question[] = systemDesignGeneral as Question[];
+
 const RAW_ALL_QUESTIONS: Question[] = [
   ...RAW_NOTION_QUESTIONS,
   ...RAW_RELATED_QUESTIONS,
+  ...RAW_SYSTEMDESIGN_QUESTIONS,
 ];
 
 const ALL_SOURCES: SourceDocument[] = [
   ...(sourcesInterview as SourceDocument[]),
   ...(sourcesProductDeepDive as SourceDocument[]),
   ...(sourcesRelated as SourceDocument[]),
+  ...(sourcesSystemDesign as SourceDocument[]),
 ];
 
 type QuestionCache = {
   notion: Question[];
   related: Question[];
+  systemdesign: Question[];
   all: Question[];
 };
 
@@ -47,6 +54,7 @@ function rebuildVisibleCache(): QuestionCache {
   visibleCache = {
     notion: filterVisibleQuestions(RAW_NOTION_QUESTIONS),
     related: filterVisibleQuestions(RAW_RELATED_QUESTIONS),
+    systemdesign: filterVisibleQuestions(RAW_SYSTEMDESIGN_QUESTIONS),
     all: filterVisibleQuestions(RAW_ALL_QUESTIONS),
   };
   return visibleCache;
@@ -65,12 +73,14 @@ export function getAllQuestions(questionSet?: QuestionSet): Question[] {
   if (!isBrowser()) {
     if (questionSet === "notion") return RAW_NOTION_QUESTIONS;
     if (questionSet === "related") return RAW_RELATED_QUESTIONS;
+    if (questionSet === "systemdesign") return RAW_SYSTEMDESIGN_QUESTIONS;
     return RAW_ALL_QUESTIONS;
   }
 
   const cache = getVisibleCache();
   if (questionSet === "notion") return cache.notion;
   if (questionSet === "related") return cache.related;
+  if (questionSet === "systemdesign") return cache.systemdesign;
   return cache.all;
 }
 
@@ -102,7 +112,14 @@ export function getAllSources(questionSet?: QuestionSet): SourceDocument[] {
   if (questionSet === "related") {
     return ALL_SOURCES.filter((s) => s.questionSet === "related");
   }
+  if (questionSet === "systemdesign") {
+    return ALL_SOURCES.filter((s) => s.questionSet === "systemdesign");
+  }
   return ALL_SOURCES;
+}
+
+export function getSystemDesignSourceBySlug(slug: string): SourceDocument | undefined {
+  return ALL_SOURCES.find((s) => s.slug === slug && s.questionSet === "systemdesign");
 }
 
 export function getSourceById(id: string): SourceDocument | undefined {

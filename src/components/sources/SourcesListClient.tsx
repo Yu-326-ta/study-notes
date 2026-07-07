@@ -2,19 +2,21 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import type { NotionCategory } from "@/domain/question";
-import { NOTION_CATEGORY_LABELS, ACTIVE_NOTION_CATEGORIES } from "@/domain/question";
+import type { NotionCategory, QuestionSet } from "@/domain/question";
+import { NOTION_CATEGORY_LABELS, ACTIVE_NOTION_CATEGORIES, QUESTION_SET_LABELS } from "@/domain/question";
 import { getAllSources, getQuestionsForSource } from "@/lib/data";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/cn";
 
 export function SourcesListClient() {
-  const [filter, setFilter] = useState<NotionCategory | "all">("all");
+  const [filter, setFilter] = useState<NotionCategory | "all" | "systemdesign">("all");
   const [search, setSearch] = useState("");
 
   const sources = useMemo(() => {
     let list = getAllSources();
-    if (filter !== "all") {
+    if (filter === "systemdesign") {
+      list = list.filter((s) => s.questionSet === "systemdesign");
+    } else if (filter !== "all") {
       list = list.filter((s) => s.notionCategory === filter);
     }
     if (search.trim()) {
@@ -33,8 +35,26 @@ export function SourcesListClient() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">資料</h1>
       <p className="text-sm text-[var(--muted)]">
-        Notion の引用元をいつでも確認できます
+        Notion やシステムデザインの引用元をいつでも確認できます
       </p>
+
+      <Link
+        href="/systemdesign"
+        className="flex min-h-[44px] items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 transition-colors hover:border-emerald-500/50"
+      >
+        <span className="text-2xl" aria-hidden>
+          📖
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-emerald-800 dark:text-emerald-300">
+            システムデザインまとめ資料
+          </p>
+          <p className="text-xs text-[var(--muted)]">
+            章ごとに読める。問題を解かずに閲覧する入口はこちら
+          </p>
+        </div>
+        <span className="shrink-0 text-sm text-emerald-700 dark:text-emerald-400">→</span>
+      </Link>
 
       <input
         type="search"
@@ -68,6 +88,16 @@ export function SourcesListClient() {
             {NOTION_CATEGORY_LABELS[cat]}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={() => setFilter("systemdesign")}
+          className={cn(
+            "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium",
+            filter === "systemdesign" ? "bg-emerald-600 text-white" : "bg-[var(--border)]/50"
+          )}
+        >
+          {QUESTION_SET_LABELS.systemdesign}
+        </button>
       </div>
 
       <ul className="space-y-3">
@@ -76,7 +106,11 @@ export function SourcesListClient() {
           return (
             <li key={source.id}>
               <Link
-                href={`/sources/${source.id}`}
+                href={
+                  source.questionSet === "systemdesign" && source.slug
+                    ? `/systemdesign/${source.slug}`
+                    : `/sources/${source.id}`
+                }
                 className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 transition-colors hover:border-[var(--source)]/40"
               >
                 <div className="flex items-start gap-3">
@@ -90,8 +124,16 @@ export function SourcesListClient() {
                       {source.excerpt.slice(0, 120)}...
                     </p>
                     <div className="mt-2 flex gap-2">
-                      <Badge variant={source.questionSet === "notion" ? "notion" : "related"}>
-                        {source.questionSet === "notion" ? "本編" : "周辺"}
+                      <Badge
+                        variant={
+                          source.questionSet === "notion"
+                            ? "notion"
+                            : source.questionSet === "related"
+                              ? "related"
+                              : "systemdesign"
+                        }
+                      >
+                        {QUESTION_SET_LABELS[source.questionSet]}
                       </Badge>
                       <Badge variant="tag">関連問題 {qCount} 問</Badge>
                     </div>

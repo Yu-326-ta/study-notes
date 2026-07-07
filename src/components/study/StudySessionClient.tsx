@@ -6,6 +6,7 @@ import type { Question } from "@/domain/question";
 import {
   NOTION_CATEGORY_LABELS,
   QUESTION_SET_LABELS,
+  questionSetBadgeVariant,
 } from "@/domain/question";
 import type { SelfGrade } from "@/domain/progress";
 import type { SourceDocument } from "@/domain/source";
@@ -26,7 +27,7 @@ type SessionStats = { known: number; partial: number; unknown: number };
 
 type StudySessionClientProps = {
   questions: Question[];
-  questionSet: "notion" | "related" | "mixed";
+  questionSet: "notion" | "related" | "systemdesign" | "mixed";
 };
 
 export function StudySessionClient({
@@ -205,10 +206,11 @@ export function StudySessionClient({
 
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm">
         <div className="mb-4 flex flex-wrap gap-2">
-          <Badge variant={current.questionSet === "notion" ? "notion" : "related"}>
+          <Badge variant={questionSetBadgeVariant(current.questionSet)}>
             {QUESTION_SET_LABELS[current.questionSet]}
           </Badge>
-          {current.category && (
+          {(current.category === "interview" ||
+            current.category === "product-deep-dive") && (
             <Badge variant="tag">{NOTION_CATEGORY_LABELS[current.category]}</Badge>
           )}
           {current.tags.slice(0, 2).map((t) => (
