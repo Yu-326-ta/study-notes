@@ -16,10 +16,12 @@ import {
   getHiddenQuestions,
   getQuestionStatus,
   getSourceForQuestion,
+  countRetryQuestions,
 } from "@/lib/data";
 import { loadProgress } from "@/lib/storage";
 import { isQuestionEdited } from "@/lib/question-customizations";
 import { QuestionActions } from "@/components/questions/QuestionActions";
+import { StudyLaunchPanel } from "@/components/study/StudyLaunchPanel";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/cn";
 
@@ -55,6 +57,11 @@ export function QuestionsListClient() {
     return getHiddenQuestions().length;
   }, [mounted, customizationRevision]);
 
+  const retryMissedCount = useMemo(() => {
+    if (!mounted) return 0;
+    return countRetryQuestions([questionSet], "retry-missed");
+  }, [mounted, questionSet, customizationRevision]);
+
   if (!mounted || !progress) {
     return <div className="py-8">読み込み中...</div>;
   }
@@ -71,14 +78,22 @@ export function QuestionsListClient() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">問題一覧</h1>
-        {hiddenCount > 0 && (
+        <div className="flex shrink-0 items-center gap-2">
           <Link
-            href="/questions/hidden"
-            className="shrink-0 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm font-medium min-h-[44px] inline-flex items-center"
+            href={`/retry?set=${questionSet}`}
+            className="rounded-xl border border-orange-500/30 bg-orange-500/5 px-3 py-2 text-sm font-medium text-orange-700 dark:text-orange-400 min-h-[44px] inline-flex items-center"
           >
-            非表示 {hiddenCount}
+            🤔 苦手 {retryMissedCount}
           </Link>
-        )}
+          {hiddenCount > 0 && (
+            <Link
+              href="/questions/hidden"
+              className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm font-medium min-h-[44px] inline-flex items-center"
+            >
+              非表示 {hiddenCount}
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-1">
@@ -118,6 +133,11 @@ export function QuestionsListClient() {
           <span className="text-emerald-700 dark:text-emerald-400">→</span>
         </Link>
       )}
+
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+        <h2 className="mb-3 text-sm font-semibold">連続学習</h2>
+        <StudyLaunchPanel questionSet={questionSet} compact />
+      </div>
 
       <input
         type="search"

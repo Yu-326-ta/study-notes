@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { getAllSources, getQuestionsForSource } from "@/lib/data";
 import { Badge } from "@/components/ui/Badge";
+import { StudyLaunchPanel } from "@/components/study/StudyLaunchPanel";
 
 export function SystemDesignListClient() {
   const sources = getAllSources("systemdesign");
@@ -13,6 +14,11 @@ export function SystemDesignListClient() {
       <p className="text-sm text-[var(--muted)]">
         まとめ資料を章ごとに読めます。問題を解かずに閲覧するだけでも OK です。
       </p>
+
+      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4">
+        <h2 className="mb-3 text-sm font-semibold">問題を連続で解く</h2>
+        <StudyLaunchPanel questionSet="systemdesign" compact />
+      </div>
 
       <ul className="space-y-3">
         {sources.map((source) => {

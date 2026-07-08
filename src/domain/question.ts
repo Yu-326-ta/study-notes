@@ -39,7 +39,27 @@ export type StudyMode =
   | "all"
   | "category"
   | "tag-linked"
+  | "tag"
+  | "retry-missed"
+  | "retry-partial"
+  | "retry-unknown"
   | "source";
+
+export type RetryGradeFilter = "all" | "partial" | "unknown";
+
+export const RETRY_GRADE_FILTER_LABELS: Record<RetryGradeFilter, string> = {
+  all: "うろ覚え + 忘れた",
+  partial: "うろ覚えのみ",
+  unknown: "忘れたのみ",
+};
+
+export function retryModeFromGradeFilter(
+  filter: RetryGradeFilter
+): "retry-missed" | "retry-partial" | "retry-unknown" {
+  if (filter === "partial") return "retry-partial";
+  if (filter === "unknown") return "retry-unknown";
+  return "retry-missed";
+}
 
 export const NOTION_CATEGORY_LABELS: Record<NotionCategory, string> = {
   interview: "質問集",

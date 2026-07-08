@@ -7,6 +7,7 @@ import {
   filterVisibleQuestions,
   getHiddenQuestionIds,
 } from "./question-customizations";
+import { loadProgress } from "./storage";
 import { weakScore, todayString } from "./srs";
 
 import notionInterview from "@/data/questions/notion/interview.json";
@@ -152,13 +153,19 @@ export function selectQuestions(
     category?: NotionCategory;
     sourceId?: string;
     weakTags?: string[];
+    tags?: string[];
+    questionIds?: string[];
     limit?: number;
     interleave?: boolean;
   } = {}
 ): Question[] {
   const today = todayString();
-  const limit = options.limit ?? all.length;
   let pool = [...all];
+
+  if (options.questionIds?.length) {
+    const idSet = new Set(options.questionIds);
+    pool = pool.filter((q) => idSet.has(q.id));
+  }
 
   if (options.category) {
     pool = pool.filter((q) => q.category === options.category);
@@ -197,17 +204,123 @@ export function selectQuestions(
         );
       }
       break;
+    case "tag":
+      if (options.tags?.length) {
+        pool = pool.filter((q) =>
+          options.tags?.some((tag) => q.tags.includes(tag))
+        );
+      } else {
+        pool = [];
+      }
+      break;
+    case "retry-missed":
+      pool = pool.filter((q) => {
+        const p = progress.questions[q.id];
+        return p?.lastGrade === "partial" || p?.lastGrade === "unknown";
+      });
+      break;
+    case "retry-partial":
+      pool = pool.filter((q) => progress.questions[q.id]?.lastGrade === "partial");
+      break;
+    case "retry-unknown":
+      pool = pool.filter((q) => progress.questions[q.id]?.lastGrade === "unknown");
+      break;
     case "source":
       break;
     case "all":
+    case "category":
     default:
       break;
   }
 
-  if (options.interleave !== false && mode !== "weak") {
+  const shouldShuffle = options.interleave !== false && mode !== "weak";
+  if (shouldShuffle) {
     pool = shuffle(pool);
   }
 
+  const limit = options.limit ?? pool.length;
+  return pool.slice(0, limit);
+}
+
+export function getStudyTags(
+  questions: Question[]
+): { tag: string; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const q of questions) {
+    for (const tag of q.tags) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+  return [...counts.entries()]
+    .filter(([, count]) => count < questions.length)
+    .sort((a, b) => b[1] - a[1])
+    .map(([tag, count]) => ({ tag, count }));
+}
+
+export function countQuestionsByTags(
+  questions: Question[],
+  tags: string[]
+): number {
+  if (tags.length === 0) return 0;
+  return questions.filter((q) => tags.some((tag) => q.tags.includes(tag))).length;
+}
+
+export function buildStudyHref(options: {
+  set?: QuestionSet | "all";
+  mode?: StudyMode;
+  tags?: string[];
+  ids?: string[];
+  continuous?: boolean;
+  category?: NotionCategory;
+  sourceId?: string;
+}): string {
+  const params = new URLSearchParams();
+  if (options.set) params.set("set", options.set);
+  if (options.mode) params.set("mode", options.mode);
+  if (options.continuous) params.set("continuous", "1");
+  if (options.tags?.length) params.set("tags", options.tags.join(","));
+  if (options.ids?.length) params.set("ids", options.ids.join(","));
+  if (options.category) params.set("category", options.category);
+  if (options.sourceId) params.set("sourceId", options.sourceId);
+  return `/study?${params.toString()}`;
+}
+
+const ALL_QUESTION_SETS: QuestionSet[] = ["notion", "related", "systemdesign"];
+
+export function resolveQuestionSets(
+  set: QuestionSet | "all"
+): QuestionSet[] {
+  return set === "all" ? ALL_QUESTION_SETS : [set];
+}
+
+export function countRetryQuestions(
+  sets: QuestionSet[],
+  mode: "retry-missed" | "retry-partial" | "retry-unknown"
+): number {
+  return sets.reduce(
+    (sum, set) =>
+      sum + countByMode(getAllQuestions(set), loadProgress(set), mode),
+    0
+  );
+}
+
+export function selectRetryQuestions(
+  sets: QuestionSet[],
+  mode: "retry-missed" | "retry-partial" | "retry-unknown",
+  options: { limit?: number; interleave?: boolean } = {}
+): Question[] {
+  let pool: Question[] = [];
+  for (const set of sets) {
+    pool.push(
+      ...selectQuestions(getAllQuestions(set), loadProgress(set), mode, {
+        interleave: false,
+      })
+    );
+  }
+  if (options.interleave !== false) {
+    pool = shuffle(pool);
+  }
+  const limit = options.limit ?? pool.length;
   return pool.slice(0, limit);
 }
 

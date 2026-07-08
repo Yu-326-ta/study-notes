@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Question } from "@/domain/question";
 import {
@@ -10,7 +11,7 @@ import {
 } from "@/domain/question";
 import type { SelfGrade } from "@/domain/progress";
 import type { SourceDocument } from "@/domain/source";
-import { getSourceForQuestion, getQuestionById } from "@/lib/data";
+import { buildStudyHref, getSourceForQuestion, getQuestionById } from "@/lib/data";
 import { recordAnswer } from "@/lib/storage";
 import { QuestionActions } from "@/components/questions/QuestionActions";
 import { isQuestionEdited } from "@/lib/question-customizations";
@@ -48,11 +49,13 @@ export function StudySessionClient({
   const [mcSelected, setMcSelected] = useState<number | null>(null);
   const [fillAnswer, setFillAnswer] = useState("");
   const [fillChecked, setFillChecked] = useState(false);
+  const [sessionGrades, setSessionGrades] = useState<Record<string, SelfGrade>>({});
 
   useEffect(() => {
     setSessionQuestions(initialQuestions);
     setIndex(0);
     setPhase("question");
+    setSessionGrades({});
   }, [initialQuestions]);
 
   const questions = sessionQuestions;
@@ -70,6 +73,7 @@ export function StudySessionClient({
     (grade: SelfGrade) => {
       if (!current) return;
       recordAnswer(progressSet, current.id, grade, memo || undefined);
+      setSessionGrades((prev) => ({ ...prev, [current.id]: grade }));
       setStats((s) => ({ ...s, [grade]: s[grade] + 1 }));
       setMemo("");
       setMcSelected(null);
@@ -146,6 +150,10 @@ export function StudySessionClient({
   }
 
   if (phase === "complete") {
+    const sessionMissedIds = Object.entries(sessionGrades)
+      .filter(([, grade]) => grade === "partial" || grade === "unknown")
+      .map(([id]) => id);
+
     return (
       <div className="flex flex-col items-center gap-6 py-12 text-center">
         <span className="text-5xl">🎉</span>
@@ -157,9 +165,35 @@ export function StudySessionClient({
           <span>😵 {stats.unknown}</span>
         </div>
         <div className="flex w-full max-w-xs flex-col gap-3">
-          <Button onClick={() => router.push("/")}>ホームに戻る</Button>
-          <Button variant="secondary" onClick={() => router.refresh()}>
-            続けて学習
+          {sessionMissedIds.length > 0 && (
+            <Button
+              onClick={() =>
+                router.push(
+                  buildStudyHref({
+                    ids: sessionMissedIds,
+                    continuous: true,
+                  })
+                )
+              }
+            >
+              このセッションの苦手を再挑戦（{sessionMissedIds.length} 問）
+            </Button>
+          )}
+          <Button
+            variant="secondary"
+            onClick={() =>
+              router.push(
+                questionSet === "mixed" ? "/retry" : `/retry?set=${questionSet}`
+              )
+            }
+          >
+            苦手問題を選んで再挑戦
+          </Button>
+          <Button variant="ghost" onClick={() => router.push("/")}>
+            ホームに戻る
+          </Button>
+          <Button variant="ghost" onClick={() => router.refresh()}>
+            同じ条件でもう一度
           </Button>
         </div>
       </div>
@@ -180,15 +214,25 @@ export function StudySessionClient({
         >
           ← 終了
         </button>
-        {source && (
-          <button
-            type="button"
-            onClick={() => setSourceOpen(true)}
-            className="min-h-[44px] rounded-xl px-3 text-sm font-medium text-[var(--source)] hover:bg-[var(--source)]/10"
+        <div className="flex items-center gap-1">
+          <Link
+            href={
+              questionSet === "mixed" ? "/retry" : `/retry?set=${questionSet}`
+            }
+            className="min-h-[44px] rounded-xl px-2 text-sm font-medium text-orange-600 hover:bg-orange-500/10 dark:text-orange-400"
           >
-            📎 資料
-          </button>
-        )}
+            🤔 苦手
+          </Link>
+          {source && (
+            <button
+              type="button"
+              onClick={() => setSourceOpen(true)}
+              className="min-h-[44px] rounded-xl px-3 text-sm font-medium text-[var(--source)] hover:bg-[var(--source)]/10"
+            >
+              📎 資料
+            </button>
+          )}
+        </div>
         <span className="text-sm text-[var(--muted)]">
           {index + 1} / {questions.length}
         </span>

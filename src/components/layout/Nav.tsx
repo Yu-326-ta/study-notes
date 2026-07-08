@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 const NAV_ITEMS = [
   { href: "/", label: "ホーム", shortLabel: "ホーム", icon: "🏠" },
   { href: "/questions", label: "問題", shortLabel: "問題", icon: "📋" },
+  { href: "/retry", label: "苦手", shortLabel: "苦手", icon: "🤔" },
   {
     href: "/systemdesign",
     label: "システムデザイン",

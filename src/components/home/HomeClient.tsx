@@ -6,6 +6,7 @@ import { useIsClient } from "@/hooks/useIsClient";
 import { NOTION_CATEGORY_LABELS, ACTIVE_NOTION_CATEGORIES } from "@/domain/question";
 import {
   countByMode,
+  countRetryQuestions,
   getAllQuestions,
   getWeakTagsFromNotionProgress,
   selectQuestions,
@@ -14,6 +15,7 @@ import { computeStats } from "@/lib/stats";
 import { getStreak, loadProgress, loadSettings } from "@/lib/storage";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { StudyLaunchPanel } from "@/components/study/StudyLaunchPanel";
 
 const CATEGORIES = ACTIVE_NOTION_CATEGORIES;
 
@@ -49,6 +51,10 @@ export function HomeClient() {
       "tag-linked",
       { weakTags, limit: 99, interleave: false }
     ).length;
+    const retryMissedTotal = countRetryQuestions(
+      ["notion", "related", "systemdesign"],
+      "retry-missed"
+    );
 
     return {
       settings,
@@ -65,6 +71,7 @@ export function HomeClient() {
       weakTags,
       tagLinkedRelated,
       weakCount: countByMode(notionQuestions, notionProgress, "weak"),
+      retryMissedTotal,
       notionStats: computeStats("notion", notionProgress, streak),
     };
   }, [mounted]);
@@ -87,6 +94,7 @@ export function HomeClient() {
     weakTags,
     tagLinkedRelated,
     weakCount,
+    retryMissedTotal,
     notionStats,
   } = stats;
 
@@ -111,6 +119,30 @@ export function HomeClient() {
           🔥 {streak} 日連続学習中
         </div>
       )}
+
+      <Link
+        href="/retry"
+        className="block rounded-2xl border-2 border-orange-500/40 bg-orange-500/10 p-5 transition-colors hover:border-orange-500/60 hover:bg-orange-500/15"
+      >
+        <div className="flex items-start gap-3">
+          <span className="text-2xl" aria-hidden>
+            🤔
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold text-orange-800 dark:text-orange-300">
+              うろ覚え・忘れた問題を再挑戦
+            </p>
+            <p className="mt-1 text-sm text-[var(--muted)]">
+              {retryMissedTotal > 0
+                ? `${retryMissedTotal} 問 · いつでも絞り込んで連続学習できます`
+                : "評価後にここからいつでも再挑戦できます"}
+            </p>
+          </div>
+          <span className="shrink-0 text-sm font-medium text-orange-700 dark:text-orange-400">
+            →
+          </span>
+        </div>
+      </Link>
 
       <Link
         href="/systemdesign"
@@ -207,9 +239,7 @@ export function HomeClient() {
             {systemDesignQuestions.length} 問）
           </p>
           <div className="mt-4 flex flex-col gap-2">
-            <Link href="/study?set=systemdesign&mode=due-today">
-              <Button size="lg">システムデザインを学ぶ</Button>
-            </Link>
+            <StudyLaunchPanel questionSet="systemdesign" compact />
             <Link href="/systemdesign">
               <Button variant="ghost" size="md">
                 資料だけ読む
